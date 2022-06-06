@@ -23,8 +23,10 @@
                 <span class="curso-info-desc">{{$filme->sumario}}</span>
             </div>
             <div class="curso-info">
-                <span class="curso-info-desc"><i class="fas fa-eye"></i><a href="{{$filme->trailer_url}}"> Trailer</a></span>
-                
+                <span class="curso-info-desc"><i class="fas fa-eye"></i><a href="{{$filme->trailer_url}}"> Trailer</a></span> 
+        </div>
+        <div class="curso-info">
+                <span class="curso-info-desc"><i class="fas fa-fast-forward"></i><a href="{{$filme->trailer_url}}"> Sessões</a></span> 
         </div>
             </div>
     </div>
