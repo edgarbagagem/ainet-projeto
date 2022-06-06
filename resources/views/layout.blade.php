@@ -27,19 +27,17 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon">
-                    <img src="/img/logo.png" alt="Logo" class="logo-img">
-                </div>
-                <div class="sidebar-brand-text mx-3">DEI</div>
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+
+                <div class="sidebar-brand-text mx-3">CineMagic</div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item {{Route::currentRouteName()=='admin.dashboard'? 'active': ''}}">
-                <a class="nav-link" href="{{route('admin.dashboard')}}">
+            <li class="nav-item ">
+                <a class="nav-link" href="#">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -48,43 +46,6 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Nav Item -->
-            @can('viewAny', App\Models\Curso::class)
-            <li class="nav-item {{Route::currentRouteName()=='admin.cursos'? 'active': ''}}">
-                <a class="nav-link" href="{{route('admin.cursos')}}">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Cursos</span></a>
-            </li>
-            @endcan
-
-            <!-- Nav Item -->
-            @can('viewAny', App\Models\Disciplina::class)
-            <li class="nav-item {{Route::currentRouteName()=='admin.disciplinas'? 'active': ''}}">
-                <a class="nav-link" href="{{route('admin.disciplinas')}}">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Disciplinas</span></a>
-                </li>
-            @endcan
-
-            <!-- Nav Item -->
-            @can('viewAny', App\Models\Docente::class)
-            <li class="nav-item {{Route::currentRouteName()=='admin.docentes'? 'active': ''}}">
-                <a class="nav-link" href="{{route('admin.docentes')}}">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Docentes</span>
-                </a>
-            </li>
-            @endcan
-
-            <!-- Nav Item -->
-            @can('viewAny', App\Models\Aluno::class)
-            <li class="nav-item {{Route::currentRouteName()=='admin.alunos'? 'active': ''}}">
-                <a class="nav-link" href="{{route('admin.alunos')}}">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Alunos</span>
-                </a>
-            </li>
-            @endcan
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -158,10 +119,10 @@
                 <div class="container-fluid">
 
                     @if (session('alert-msg'))
-                        @include('partials.message')
+                    @include('partials.message')
                     @endif
                     @if ($errors->any())
-                        @include('partials.errors-message')
+                    @include('partials.errors-message')
                     @endif
 
                     <!-- Page Heading -->
@@ -186,7 +147,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Departamento de Engenharia Informática 2020</span>
+                        <span>Copyright &copy; CineMagic</span>
                     </div>
                 </div>
             </footer>
@@ -216,7 +177,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary"  href="{{route('logout')}}" onclick="event.preventDefault();
+                    <a class="btn btn-primary" href="{{route('logout')}}" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">Logout</a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
