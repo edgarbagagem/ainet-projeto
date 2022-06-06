@@ -15,7 +15,7 @@ class InitialController extends Controller
     $mytime = Carbon\Carbon::now();
     $filmes = Filme::join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
                         ->where('sessoes.data', '>=', $mytime)
-                        ->paginate(10);
+                        ->paginate();
                                       
         
         return view('filmes.index', compact('filmes'));

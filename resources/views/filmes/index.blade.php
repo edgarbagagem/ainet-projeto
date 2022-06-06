@@ -3,31 +3,6 @@
 @section('title')
 <h2>Filmes</h2>
 @endsection
-<!-- 
-
-@section('content')
-<div class="docentes-area">
-@foreach($filmes as $filme)
-<div class = "docente">
-
-    <div class="card docentes-imagem" style="width: 18rem;">
-        <img class="card-img-top" src="{{$filme->cartaz_url ?
-         asset('storage/cartazes/' . $filme->cartaz_url) :
-         asset('img/default_img.png') }}" alt="Cartaz do filme">
-    <div class="card-body">
-        <h5 class="card-title">{{$filme->titulo}}</h5>
-        <p class="card-text">{{$filme->sumario}}</p>
-    </div>
-
-    <div class="card-body">
-        <a href="{{$filme->trailer_url}}" class="card-link">Trailer</a>
-    </div>
-    </div>
-    </div>
-
-@endforeach
-    </div>    
-@endsection -->
 
 @section('content')
 <div class="cursos-area">
@@ -47,10 +22,13 @@
                 <span class="curso-label">Sumario</span>
                 <span class="curso-info-desc">{{$filme->sumario}}</span>
             </div>
+            <div class="curso-info">
+                <span class="curso-info-desc"><i class="fas fa-eye"></i><a href="{{$filme->trailer_url}}"> Trailer</a></span>
+                
         </div>
+            </div>
     </div>
     @endforeach
 </div>
 
 @endsection
-    
