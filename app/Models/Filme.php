@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Filme extends Model
 {
     use HasFactory;
+
+    public function generos(){
+        $this->belongsTo(Genero::class);
+    }
+
+    public function sessoes(){
+        $this->hasMany(Sessao::class);
+    }
 }

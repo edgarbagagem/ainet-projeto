@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Sala extends Model
 {
     use HasFactory;
+
+    public function sessoes(){
+        $this->hasMany(Sala::class);
+    }
+    
 }
