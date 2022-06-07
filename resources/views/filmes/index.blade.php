@@ -5,32 +5,31 @@
 @endsection
 
 @section('content')
-<div class="cursos-area">
-    @foreach($filmes as $filme)
-    <div class="curso">
-        <div class="curso-imagem">
-            <img src="{{$filme->cartaz_url ?
+<div class="container">
+    <div class="row equal">
+        @foreach($filmes as $filme)
+        <div class="col-sm-4 d-flex pb-3">
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="{{$filme->cartaz_url ?
          asset('storage/cartazes/' . $filme->cartaz_url) :
-         asset('img/default_img.png') }}" alt="Cartas do filme">
-        </div>
-        <div class="curso-info-area">
-            <div class="curso-info">
-                <span class="curso-label">Titulo</span>
-                <span class="curso-info-desc">{{$filme->titulo}}</span>
+         asset('img/default_img.png') }}" alt="Cartaz do filme">
+                <div class="card-body">
+
+                    <h5 class="carad-title">{{$filme->titulo}}</h5>
+                    <p class="card-text">{{$filme->sumario}}</p>
+                </div>
+
+
+                <div class="d-flex align-items-end">
+                    <div class="card-body">
+                        <p><i class="fas fa-eye"></i> <a class="card-link" href="{{$filme->trailer_url}}"> Trailer</a></p>
+                        <p><i class="fas fa-fast-forward"></i> <a class="card-link" href="{{route('sessoes.index')}}"> Sessões</a></p>
+                    </div>
+                </div>
             </div>
-            <div class="curso-info">
-                <span class="curso-label">Sumario</span>
-                <span class="curso-info-desc">{{$filme->sumario}}</span>
-            </div>
-            <div class="curso-info">
-                <span class="curso-info-desc"><i class="fas fa-eye"></i><a href="{{$filme->trailer_url}}"> Trailer</a></span> 
         </div>
-        <div class="curso-info">
-                <span class="curso-info-desc"><i class="fas fa-fast-forward"></i><a href="{{$filme->trailer_url}}"> Sessões</a></span> 
-        </div>
-            </div>
+        @endforeach
     </div>
-    @endforeach
 </div>
 
 @endsection

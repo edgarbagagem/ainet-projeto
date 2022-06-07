@@ -1,47 +1,45 @@
-@extends('layout_admin')
+@extends('layout')
 @section('title','Sessões' )
 @section('content')
-<div class="row mb-3">
-    @can('create', App\Models\Curso::class)
-    <a href="{{route('admin.cursos.create')}}" class="btn btn-success" role="button" aria-pressed="true">Novo Curso</a>
+<!-- <div class="row mb-3">
+    @can('create', App\Models\sessao::class)
+    <a href="{{route('admin.sessoes.create')}}" class="btn btn-success" role="button" aria-pressed="true">Novo sessao</a>
     @endcan
-</div>
+</div> -->
+
 <table class="table">
     <thead>
         <tr>
             <th>Título</th>
             <th>Data</th>
             <th>Hora</th>
-            <th>Nome</th>
-            <th></th>
-            <th></th>
+            <th>Sala</th>
         </tr>
     </thead>
     <tbody>
-        @foreach ($cursos as $curso)
+        @foreach ($sessoes as $sessao)
         <tr>
-            <td>{{$curso->abreviatura}}</td>
-            <td>{{$curso->nome}}</td>
-            <td>{{$curso->tipo}}</td>
-            <td>{{$curso->semestres}}</td>
-            <td>{{$curso->ECTS}}</td>
-            <td>{{$curso->vagas}}</td>
-            <td>
-                @can('view', $curso)
-                <a href="{{route('admin.cursos.edit', ['curso' => $curso]) }}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Alterar</a>
+            <td>{{$sessao->titulo}}</td>
+            <td>{{$sessao->data}}</td>
+            <td>{{$sessao->horario_inicio}}</td>
+            <td>{{$sessao->sala}}</td>
+            <!-- <td>
+                @can('view', $sessao)
+                <a href="{{route('admin.sessaos.edit', ['sessao' => $sessao]) }}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Alterar</a>
                 @endcan
-            </td>
-            <td>
-                @can('delete', $curso)
-                <form action="{{route('admin.cursos.destroy', ['curso' => $curso]) }}"" method=" POST">
+            </td> -->
+            <!-- <td>
+                @can('delete', $sessao)
+                <form action="{{route('admin.sessoes.destroy', ['sessao' => $sessao]) }}"" method=" POST">
                     @csrf
                     @method("DELETE")
                     <input type="submit" class="btn btn-danger btn-sm" value="Apagar">
                 </form>
                 @endcan
-            </td>
+            </td> -->
         </tr>
         @endforeach
     </tbody>
+    {{$sessoes->withQueryString()->links()}}
 </table>
 @endsection

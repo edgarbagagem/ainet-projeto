@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InitialController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\SessaoController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +17,10 @@ use App\Http\Controllers\InitialController;
 |
 */
 
-Route::get('/', [App\Http\Controllers\InitialController::class, 'index'])->name('filmes.index');
+Route::get('/', [InitialController::class, 'index'])->name('filmes.index');
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-
+Route::get('sessoes', [SessaoController::class, 'index'])->name('sessoes.index');
