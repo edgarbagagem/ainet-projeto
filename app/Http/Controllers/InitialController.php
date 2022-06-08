@@ -20,9 +20,10 @@ class InitialController extends Controller
                         ->paginate();*/
 
 
-        $filmes = Filme::select('filmes.titulo', 'filmes.sumario', 'filmes.cartaz_url', 'filmes.trailer_url')
+        $filmes = Filme::select('filmes.id', 'filmes.titulo', 'filmes.sumario', 'filmes.cartaz_url', 'filmes.trailer_url')
             ->join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
             ->where('sessoes.data', '>=', $mytime)
+            ->groupBy('filmes.id')
             ->groupBy('filmes.titulo')
             ->groupBy('filmes.sumario')
             ->groupBy('filmes.cartaz_url')

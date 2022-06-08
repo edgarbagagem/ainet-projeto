@@ -39,7 +39,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item ">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="{{url('/')}}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -54,9 +54,9 @@
 
             <!-- Nav Item -->
             <li class="nav-item">
-                <a class="nav-link" href="{{url('/')}}">
-                    <i class="fas fa-fw fa-home"></i>
-                    <span>Parte Publica</span>
+                <a class="nav-link" href="{{route('sessoes.index')}}">
+                    <i class="fas fa-fw fa-fast-forward"></i>
+                    <span>Sessões</span>
                 </a>
             </li>
 
@@ -95,20 +95,24 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{Auth::user()->name}}</span>
-                                <img class="img-profile rounded-circle" src="{{Auth::user()->url_foto ? asset('storage/fotos/' . Auth::user()->url_foto) : asset('img/default_img.png') }}">
+                                <img class="img-profile rounded-circle" src="{{Auth::user()->foto_url ? asset('storage/fotos/' . Auth::user()->foto_url) : asset('img/default_img.png') }}">
                             </a>
+
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="{{auth()->user()->tipo=='A'?route('admin.alunos.edit',auth()->user()->aluno):route('admin.docentes.edit',auth()->user()->docente)}}">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Perfil
+                                {{--
+                            <a class="dropdown-item" href="{{auth()->user()->tipo=='A'?route('admin.alunos.edit',auth()->user()->aluno):route('admin.docentes.edit',auth()->user()->docente)}}">
+                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Perfil
                                 </a>
+                                --}}
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
                             </div>
+
                         </li>
                         @endguest
                     </ul>

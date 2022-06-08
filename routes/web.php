@@ -23,4 +23,6 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('sessoes', [SessaoController::class, 'index'])->name('sessoes.index');
+Route::get('/sessoes', [SessaoController::class, 'index'])->name('sessoes.index');
+
+Route::get('/sessoes/{id}', [SessaoController::class, 'sessoesFilme'])->name('sessoes.filme');
