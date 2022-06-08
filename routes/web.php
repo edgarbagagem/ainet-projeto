@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InitialController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\SessaoController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -23,4 +24,14 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('sessoes', [SessaoController::class, 'index'])->name('sessoes.index');
+Route::get('/sessoes', [SessaoController::class,'index'])->name('sessoes.index');
+
+
+Route::post('/password/reset', [UserController::class, 'validatePasswordRequest'])->name('password.validateRequest');
+
+Route::put('/password/reset', [UserController::class, 'resetPassword'])->name('password.Reset');
+
+//Route::post('/password/reset', [UserController::class, 'send_email_with_notification'])->name('email.send_with_notification');
+
+//Route::post('/password/reset', [UserController::class, ''])
+
