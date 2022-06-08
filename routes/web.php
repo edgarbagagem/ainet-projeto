@@ -24,9 +24,6 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/sessoes', [SessaoController::class,'index'])->name('sessoes.index');
-
-
 Route::post('/password/reset', [UserController::class, 'validatePasswordRequest'])->name('password.validateRequest');
 
 Route::put('/password/reset', [UserController::class, 'resetPassword'])->name('password.Reset');
@@ -35,3 +32,6 @@ Route::put('/password/reset', [UserController::class, 'resetPassword'])->name('p
 
 //Route::post('/password/reset', [UserController::class, ''])
 
+Route::get('/sessoes', [SessaoController::class, 'index'])->name('sessoes.index');
+
+Route::get('/sessoes/{id}', [SessaoController::class, 'sessoesFilme'])->name('sessoes.filme');

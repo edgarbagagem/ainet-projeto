@@ -22,8 +22,8 @@
 
                 <div class="d-flex align-items-end">
                     <div class="card-body">
-                        <p><i class="fas fa-eye"></i> <a class="card-link" href="{{$filme->trailer_url}}"> Trailer</a></p>
-                        <p><i class="fas fa-fast-forward"></i> <a class="card-link" href="{{route('sessoes.index')}}"> Sessões</a></p>
+                        <p><i class="fas fa-eye"></i> <a class="card-link" href="{{$filme->trailer_url}}"> Trailer </a></p>
+                        <p><i class="fas fa-fast-forward"></i> <a class="card-link" href="{{route('sessoes.filme', ['id' => $filme->id])}}"> Sessões </a></p>
                     </div>
                 </div>
             </div>
