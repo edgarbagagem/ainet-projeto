@@ -58,7 +58,7 @@
                     <i class="fas fa-fw fa-fast-forward"></i>
                     <span>Sessões</span>
                 </a>
-            </li>
+            </li>  
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -67,9 +67,24 @@
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
+                        <!-- Divider -->
+            
+            <hr class="sidebar-divider">
+
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('index.user')}}">
+                    <i class="fas fa-user-alt"></i>
+                    <span>Dados do Utilizador</span>
+                </a> 
+            </li> 
+
+            <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block">
 
         </ul>
         <!-- End of Sidebar -->
+        
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -100,16 +115,20 @@
 
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                {{--
-                            <a class="dropdown-item" href="{{auth()->user()->tipo=='A'?route('admin.alunos.edit',auth()->user()->aluno):route('admin.docentes.edit',auth()->user()->docente)}}">
+                                
+                            <a class="dropdown-item" href="{{ route('index.user')}}">
                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Perfil
                                 </a>
-                                --}}
+                                
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
+                                </a>
+                                <a class="dropdown-item" href="{{ route('user.editPassword') }}">
+                                <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Alterar a password
                                 </a>
                             </div>
 

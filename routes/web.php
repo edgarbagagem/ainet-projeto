@@ -5,6 +5,7 @@ use App\Http\Controllers\InitialController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\SessaoController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\HomeController;
 
 
 /*
@@ -35,3 +36,13 @@ Route::put('/password/reset', [UserController::class, 'resetPassword'])->name('p
 Route::get('/sessoes', [SessaoController::class, 'index'])->name('sessoes.index');
 
 Route::get('/sessoes/{id}', [SessaoController::class, 'sessoesFilme'])->name('sessoes.filme');
+
+Route::get('/index/perfil', [UserController::class,'index'])->name('index.user');
+
+Route::get('/index/perfil/editPerfil', [UserController::class, 'editPerfil'])->name('index.user.editPerfil');
+
+Route::put('/index/perfil/updatePerfil', [UserController::class, 'updatePerfil'])->name('index.user.updatePerfil');
+
+Route::get('/editPassword', [UserController::class, 'editPassword'])->name('user.editPassword');
+
+Route::put('/updatePassword', [UserController::class,'updatePassword'])->name('user.updatePassword');
