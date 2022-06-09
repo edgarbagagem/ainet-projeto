@@ -14,6 +14,8 @@
             <th>Data</th>
             <th>Hora</th>
             <th>Sala</th>
+            <th>Lugares</th>
+            <th>Lugares Ocupados </th>
         </tr>
     </thead>
     <tbody>
@@ -23,7 +25,9 @@
             <td>{{$sessao->data}}</td>
             <td>{{$sessao->horario_inicio}}</td>
             <td>{{$sessao->sala}}</td>
-            <!-- <td>
+            <td>{{$sessao->totalLugares}}</td>
+            <td>{{$sessao->lugaresOcupados}}</td>
+            <!--<td>
                 @can('view', $sessao)
                 <a href="{{route('admin.sessaos.edit', ['sessao' => $sessao]) }}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Alterar</a>
                 @endcan

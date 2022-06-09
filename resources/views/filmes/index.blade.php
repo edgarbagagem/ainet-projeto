@@ -20,18 +20,27 @@
                     <option value="" {{'' == old('genero', $selectedGenero) ? 'selected' : ''}}>Todos
                         Géneros</option>
                     @foreach ($generos as $genero)
-                    <option value={{$genero}} {{$genero == old('genero', $selectedGenero) ? 'selected' :
-''}}>{{$genero}}</option>
+                    <option value={{$genero}} {{$genero == old('genero', $selectedGenero) ? 'selected' : ''}}>{{$genero}}</option>
                     @endforeach
                 </select>
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit">Filtrar</button>
                 </div>
             </div>
-        </form>
-    </div>
-</div>
 
+        </form>
+
+        <div class="form-group">
+            <form method="GET" action="{{route('filmes.index')}}" class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="substring">
+                <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+                <button class="btn btn-outline-primary my-2 my-sm-0" style="margin-left: 0.5rem" type="submit" value=""> Repor</button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
 
 <div class="row equal">
     @foreach($filmes as $filme)
