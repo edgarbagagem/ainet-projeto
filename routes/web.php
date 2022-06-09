@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InitialController;
-use App\Http\Controllers\EmailController;
 use App\Http\Controllers\SessaoController;
 use App\Http\Controllers\UserController;
 

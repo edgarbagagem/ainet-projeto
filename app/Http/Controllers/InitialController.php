@@ -17,14 +17,17 @@ class InitialController extends Controller
 
         $genero = $request->genero ?? '';
 
+        $substring = $request->substring ?? '';
+
         $mytime = Carbon\Carbon::now();
         $format1 = 'Y-m-d';
         $format2 = 'H:i:s';
         $data = Carbon\Carbon::parse($mytime)->format($format1);
         $time = Carbon\Carbon::parse($mytime)->format($format2);
 
+        $filmes = Filme::query();
 
-        $filmes = Filme::select('filmes.id', 'filmes.titulo', 'filmes.sumario', 'filmes.cartaz_url', 'filmes.trailer_url', 'filmes.genero_code')
+        $filmes = $filmes->select('filmes.id', 'filmes.titulo', 'filmes.sumario', 'filmes.cartaz_url', 'filmes.trailer_url', 'filmes.genero_code')
             ->join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
             ->where('sessoes.data', '>=', $data)
             ->where('sessoes.horario_inicio', '>=', $time)
@@ -33,8 +36,7 @@ class InitialController extends Controller
             ->groupBy('filmes.sumario')
             ->groupBy('filmes.cartaz_url')
             ->groupBy('filmes.trailer_url')
-            ->groupBy('filmes.genero_code')
-            ->get();
+            ->groupBy('filmes.genero_code');
 
         $generos = Filme::select('filmes.genero_code')
             ->join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
@@ -46,20 +48,18 @@ class InitialController extends Controller
         $generos = Genero::whereIn('code', $generos)->pluck('code', 'nome');
 
         if ($genero) {
-            $filmes = Filme::select('filmes.id', 'filmes.titulo', 'filmes.sumario', 'filmes.cartaz_url', 'filmes.trailer_url', 'filmes.genero_code')
-                ->join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
-                ->where('sessoes.data', '>=', $data)
-                ->where('sessoes.horario_inicio', '>=', $time)
-                ->where('genero_code', $genero)
-                ->groupBy('filmes.id')
-                ->groupBy('filmes.titulo')
-                ->groupBy('filmes.sumario')
-                ->groupBy('filmes.cartaz_url')
-                ->groupBy('filmes.trailer_url')
-                ->groupBy('filmes.genero_code')
-                ->get();
+            $filmes = $filmes->where('genero_code', $genero);
         }
 
+        if ($substring) {
+            $filmes = $filmes->where(function ($query) use ($substring) {
+                $query->where('titulo', 'LIKE', "%{$substring}%")
+                    ->orWhere('sumario', 'like', "%{$substring}%");
+            });
+        }
+
+
+        $filmes = $filmes->get();
         return view('filmes.index')->withFilmes($filmes)
             ->withGeneros($generos)
             ->withSelectedGenero($genero);
