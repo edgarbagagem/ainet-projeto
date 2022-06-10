@@ -5,6 +5,7 @@ use App\Http\Controllers\InitialController;
 use App\Http\Controllers\SessaoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CartController;
 
 
 /*
@@ -45,3 +46,5 @@ Route::put('/index/perfil/updatePerfil', [UserController::class, 'updatePerfil']
 Route::get('/editPassword', [UserController::class, 'editPassword'])->name('user.editPassword');
 
 Route::put('/updatePassword', [UserController::class,'updatePassword'])->name('user.updatePassword');
+
+Route::get('/carrinho/{id}', [CartController::class, 'index'])->name('add.cart');

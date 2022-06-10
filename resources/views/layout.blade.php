@@ -40,8 +40,8 @@
             <!-- Nav Item - Dashboard -->
             <li class="nav-item ">
                 <a class="nav-link" href="{{url('/')}}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
+                    <i class="fas fa-fw fa-film"></i>
+                    <span>Filmes em Exibição</span>
                 </a>
             </li>
 
@@ -131,6 +131,9 @@
 
                         </li>
                         @endguest
+                        <li class = "nav-item">
+                        <a class = "nav-link" href="#"><i class="fas fa-shopping-cart" style="color:black; font: size 24px;"></i></a>
+                        </li>
                     </ul>
 
 

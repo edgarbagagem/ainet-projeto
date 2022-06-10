@@ -46,9 +46,11 @@
     @foreach($filmes as $filme)
     <div class="col-sm-4 d-flex pb-3">
         <div class="card" style="width: 18rem;">
+        @if(!is_null($filme->cartaz_url))
             <img class="card-img-top" src="{{$filme->cartaz_url ?
          asset('storage/cartazes/' . $filme->cartaz_url) :
          asset('img/default_img.png') }}" alt="Cartaz do filme">
+         @endif
             <div class="card-body">
 
                 <h5 class="carad-title">{{$filme->titulo}}</h5>
@@ -58,7 +60,9 @@
 
             <div class="d-flex align-items-end">
                 <div class="card-body">
-                    <p><i class="fas fa-eye"></i> <a class="card-link" href="{{$filme->trailer_url}}"> Trailer </a></p>
+                @if(!is_null($filme->trailer_url))
+                    <p><i class="fas fa-eye"></i><a class="card-link" href="{{$filme->trailer_url}}"> Trailer </a></p>
+                    @endif
                     <p><i class="fas fa-fast-forward"></i> <a class="card-link" href="{{route('sessoes.filme', ['id' => $filme->id])}}"> Sessões </a></p>
                 </div>
             </div>
