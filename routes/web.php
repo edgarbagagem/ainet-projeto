@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClienteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InitialController;
 use App\Http\Controllers\SessaoController;
@@ -36,7 +37,7 @@ Route::get('/sessoes', [SessaoController::class, 'index'])->name('sessoes.index'
 
 Route::get('/sessoes/{id}', [SessaoController::class, 'sessoesFilme'])->name('sessoes.filme');
 
-Route::get('/index/perfil', [UserController::class,'index'])->name('index.user');
+Route::get('/index/perfil', [UserController::class, 'index'])->name('index.user');
 
 Route::get('/index/perfil/editPerfil', [UserController::class, 'editPerfil'])->name('index.user.editPerfil');
 
@@ -44,4 +45,15 @@ Route::put('/index/perfil/updatePerfil', [UserController::class, 'updatePerfil']
 
 Route::get('/editPassword', [UserController::class, 'editPassword'])->name('user.editPassword');
 
-Route::put('/updatePassword', [UserController::class,'updatePassword'])->name('user.updatePassword');
+Route::put('/updatePassword', [UserController::class, 'updatePassword'])->name('user.updatePassword');
+
+
+//administração de clientes
+Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index')
+    ->middleware('can:viewAny,App\Models\Cliente');
+
+Route::delete('/clientes/{cliente}', [ClienteController::class, 'delete'])->name('clientes.delete')
+    ->middleware('can:delete, App\Models\Cliente');
+
+Route::put('/clientes/{cliente}', [ClienteController::class, 'blockunblock'])->name('clientes.blockunblock')
+    ->middleware('can:update,cliente');

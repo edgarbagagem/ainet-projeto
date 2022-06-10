@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Cliente extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
 
     public function user()
@@ -15,11 +16,13 @@ class Cliente extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function recibos(){
+    public function recibos()
+    {
         return $this->hasMany(Recibos::class);
     }
 
-    public function bilhetes(){
+    public function bilhetes()
+    {
         return $this->hasMany(Bilhetes::class);
     }
 }

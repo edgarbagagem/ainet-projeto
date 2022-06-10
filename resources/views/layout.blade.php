@@ -68,6 +68,7 @@
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
             @if(Auth()->check())
+            @if(Auth()->user()->tipo == 'C' )
             <!-- Divider -->
             <hr class="sidebar-divider">
             <li class="nav-item">
@@ -79,6 +80,20 @@
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
             @endif
+            @endif
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Nav Item -->
+            @can('viewAny', App\Models\Cliente::class)
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('clientes.index')}}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Clientes</span>
+                </a>
+            </li>
+            @endcan
+
         </ul>
         <!-- End of Sidebar -->
 
@@ -113,11 +128,12 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
 
+                                @if(Auth()->user()->tipo == 'C' )
                                 <a class="dropdown-item" href="{{ route('index.user')}}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Perfil
                                 </a>
-
+                                @endif
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
