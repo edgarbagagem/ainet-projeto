@@ -48,6 +48,27 @@ Route::get('/editPassword', [UserController::class, 'editPassword'])->name('user
 Route::put('/updatePassword', [UserController::class, 'updatePassword'])->name('user.updatePassword');
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //administração de clientes
 Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes.index')
     ->middleware('can:viewAny,App\Models\Cliente');
