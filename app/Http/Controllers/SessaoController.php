@@ -12,7 +12,7 @@ class SessaoController extends Controller
 {
     public function index(Request $request)
     {
-        $currentTime = Carbon\Carbon::now();
+        $currentTime = Carbon\Carbon::now()->subMinute(5);
         $format1 = 'Y-m-d';
         $format2 = 'H:i:s';
         $data = Carbon\Carbon::parse($currentTime)->format($format1);
@@ -41,7 +41,7 @@ class SessaoController extends Controller
 
     public function sessoesFilme($id)
     {
-        $currentTime = Carbon\Carbon::now();
+        $currentTime = Carbon\Carbon::now()->subMinute(5);
         $format1 = 'Y-m-d';
         $format2 = 'H:i:s';
         $data = Carbon\Carbon::parse($currentTime)->format($format1);

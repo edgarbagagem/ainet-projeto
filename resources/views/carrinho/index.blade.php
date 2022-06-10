@@ -1,6 +1,7 @@
 @extends('layout')
-@section('title','Sessões' )
+@section('title','Carrinho de Compras' )
 @section('content')
+
 <!-- <div class="row mb-3">
     @can('create', App\Models\sessao::class)
     <a href="{{route('admin.sessoes.create')}}" class="btn btn-success" role="button" aria-pressed="true">Novo sessao</a>
@@ -15,7 +16,8 @@
             <th>Hora</th>
             <th>Sala</th>
             <th>Lugares Disponíveis</th>
-            <th>Bilhetes</th>
+            <th>Quantidade de Bilhetes</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -30,9 +32,9 @@
             <td>{{$sessao->horario_inicio}}</td>
             <td>{{$sessao->sala}}</td>
             <td>{{$lugaresDisponiveis}}</td>
-            <td>
-                        <a class="card-link" href="{{route('add.cart', ['id' => $sessao->id])}}">Adicionar ao Carrinho</a>
-            </td>
+            <td><input type="number" id="numeroBilhetes" name="numBilhetes" min="1" max="10" placeholder="0"></td>
+            <td><input type="button" onclick="CalculatePrice()" value="Calcular Preço Final"></td>
+
 
             <!--<td>
                 @can('view', $sessao)
@@ -52,6 +54,7 @@
 </form>
         @endforeach
     </tbody>
-    {{$sessoes->withQueryString()->links()}}
 </table>
+
+ 
 @endsection
