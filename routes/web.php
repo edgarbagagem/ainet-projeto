@@ -58,8 +58,27 @@ Route::delete('/clientes/{cliente}', [ClienteController::class, 'delete'])->name
 
 Route::put('/clientes/{cliente}', [ClienteController::class, 'blockunblock'])->name('clientes.blockunblock')
     ->middleware('can:update,cliente');
-Route::put('/updatePassword', [UserController::class, 'updatePassword'])->name('user.updatePassword');
 
+//administração de a/f
+
+Route::get('/admininistracao', [UserController::class, 'admin'])->name('users.admin')->middleware('can:viewAny, App\Models\User');
+
+Route::delete('/administracao/{user}', [UserController::class, 'admin_delete'])->name('users.admin.delete')->middleware('can:delete, App\Models\User');
+
+Route::put('/administracao/{user}', [UserController::class, 'admin_blockunblock'])->name('users.admin.blockunblock')
+    ->middleware('can:update, App\Models\User');
+
+Route::get('/admininistracao/perfil/{user}', [UserController::class, 'admin_consultar'])->name('users.admin.consultar')->middleware('can:view, App\Models\User');
+
+Route::get('/admininistracao/perfil/edit/{user}', [UserController::class, 'admin_editar'])->name('users.admin.edit')->middleware('can:view, App\Models\User');
+
+Route::put('/administracao/perfil/edit/{user}', [UserController::class, 'admin_updateUser'])->name('users.admin.update')
+    ->middleware('can:update, App\Models\User');
+
+Route::get('/admininistracao/create', [UserController::class, 'admin_create'])->name('users.admin.create')->middleware('can:create, App\Models\User');
+
+Route::post('/administracao', [UserController::class, 'admin_store'])->name('users.admin.store')
+    ->middleware('can:create,App\Models\User');
 
 //carrinho
 Route::get('/carrinho/{id}', [CartController::class, 'index'])->name('add.cart');

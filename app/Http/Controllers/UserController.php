@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Cliente;
+use App\Http\Requests\UserPost;
 
 class UserController extends Controller
 {
@@ -36,8 +38,9 @@ class UserController extends Controller
         $valueForClientesTable['nif'] = $request['nif'];
         $valueForClientesTable['tipo_pagamento'] = $request['tipoPagamento'];
         if ($request->hasFile('foto')) {
-            $path = $request['foto']->store('public/fotos');
-            $valueForUserTable['foto_url'] = basename($path);
+            $path = 'storage/fotos/';
+            $valueForUserTable['foto_url'] = $request->file('foto')->getClientOriginalName();
+            $request->foto->move($path, $valueForUserTable['foto_url']);
         }
         User::where('id', \Auth::user()->id)->update($valueForUserTable);
         Cliente::where('id', \Auth::user()->id)->update($valueForClientesTable);
@@ -108,6 +111,129 @@ class UserController extends Controller
         $user = DB::table('users')->where('email', $email)->select('firstname', 'email')->first();
 
         $link = config('base_url') . '/password/reset' . $token . '?email=' . urlencode($user->email);
+    }
+
+    public function admin(Request $request)
+    {
+
+        $substring = $request->substring ?? '';
+
+        $users = User::query();
+
+        $users = $users->where(function ($query) {
+            $query->where('tipo', '=', 'A')
+                ->orWhere('tipo', '=', 'F');
+        });
+
+        $users = $users->where('id', '!=', Auth()->user()->id);
+
+        if ($substring) {
+            $users = $users->where(function ($query) use ($substring) {
+                $query->where('users.name', 'LIKE', "%{$substring}%")
+                    ->orWhere('users.id', 'like', "%{$substring}%");
+            });
+        }
+
+        $users = $users->paginate(10);
+        return view('administracao.index')->withUsers($users);
+    }
+
+    public function admin_delete(User $user)
+    {
+        $oldID = $user->id;
+
+        try {
+            $user->delete();
+
+            return redirect()->route('users.admin')
+                ->with('alert-msg', 'User"' . $oldID . '" foi apagado com sucesso!')
+                ->with('alert-type', 'success');
+        } catch (\Throwable $th) {
+            // $th é a exceção lançada pelo sistema - por norma, erro ocorre no servidor BD MySQL
+            // Descomentar a próxima linha para verificar qual a informação que a exceção tem
+            //dd($th, $th->errorInfo);
+            return redirect()->route('users.admin')
+                ->with('alert-msg', 'Não foi possível apagar o User"' . $oldID   . '". Erro: ' . $th->errorInfo[2])
+                ->with('alert-type', 'danger');
+        }
+    }
+
+    public function admin_blockunblock(User $user)
+    {
+
+        try {
+            if ($user->bloqueado == 1) {
+                $user->bloqueado = 0;
+            } else {
+                $user->bloqueado = 1;
+            }
+
+            $user->save();
+
+
+            return redirect()->route('users.admin')
+                ->with('alert-msg', 'user "' . $user->id . '" foi bloqueado/desbloqueado com sucesso!')
+                ->with('alert-type', 'success');
+        } catch (\Throwable $th) {
+            // $th é a exceção lançada pelo sistema - por norma, erro ocorre no servidor BD MySQL
+            // Descomentar a próxima linha para verificar qual a informação que a exceção tem
+            //dd($th, $th->errorInfo);
+            return redirect()->route('users.admin')
+                ->with('alert-msg', 'Não foi possível bloquear/desbloquear o user "' . $user->id  . '". Erro: ' . $th->errorInfo[2])
+                ->with('alert-type', 'danger');
+        }
+    }
+
+    public function admin_consultar(User $user)
+    {
+        return view('administracao.consultar')->withUser($user);
+    }
+
+    public function admin_editar(User $user)
+    {
+        return view('administracao.edit')->withUser($user);
+    }
+
+    public function admin_updateUser(UserPost $request, User $user)
+    {
+        $validated_data = $request->validated();
+        $user->name = $validated_data['name'];
+        $user->email = $validated_data['email'];
+        $user->tipo = $request->tipo;
+        if ($request->hasFile('foto')) {
+            $path = 'storage/fotos/';
+            $user->foto_url = $request->file('foto')->getClientOriginalName();
+            $request->foto->move($path, $user->foto_url);
+        }
+        $user->save();
+        return redirect()->route('users.admin')
+            ->with('alert-msg', 'user "' . $user->id . '" foi alterado com sucesso!')
+            ->with('alert-type', 'success');
+    }
+
+    public function admin_create()
+    {
+        $newUser = new User;
+        return view('administracao.create')->withUser($newUser);
+    }
+
+    public function admin_store(UserPost $request)
+    {
+        $validated_data = $request->validated();
+        $newUser = new User;
+        $newUser->name = $validated_data['name'];
+        $newUser->password = Hash::make('123');
+        $newUser->email = $validated_data['email'];
+        $newUser->tipo = $request->tipo;
+        if ($request->hasFile('foto')) {
+            $path = 'storage/fotos/';
+            $newUser->foto_url = $request->file('foto')->getClientOriginalName();
+            $request->foto->move($path, $newUser->foto_url);
+        }
+        $newUser->save();
+        return redirect()->route('users.admin')
+            ->with('alert-msg', 'user criado  com sucesso!')
+            ->with('alert-type', 'success');
     }
 
     /*

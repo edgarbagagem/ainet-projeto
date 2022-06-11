@@ -59,7 +59,8 @@
                     <span>Sessões</span>
                 </a>
             </li>
-
+            <!-- Divider -->
+            <hr class="sidebar-divider">
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
@@ -71,6 +72,8 @@
             @if(Auth()->user()->tipo == 'C' )
             <!-- Divider -->
             <hr class="sidebar-divider">
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
             <li class="nav-item">
                 <a class="nav-link" href="{{route('index.user')}}">
                     <i class="fas fa-user-alt"></i>
@@ -78,20 +81,42 @@
                 </a>
             </li>
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-            @endif
-            @endif
+            <hr class="sidebar-divider">
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
+            @endif
+            @endif
 
             <!-- Nav Item -->
             @can('viewAny', App\Models\Cliente::class)
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
             <li class="nav-item">
                 <a class="nav-link" href="{{route('clientes.index')}}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Clientes</span>
                 </a>
             </li>
+            @endcan
+
+            <!-- Nav Item -->
+            @can('viewAny', App\Models\User::class)
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('users.admin')}}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Administradores e Funcionários</span>
+                </a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
             @endcan
 
         </ul>
@@ -147,8 +172,8 @@
 
                         </li>
                         @endguest
-                        <li class = "nav-item">
-                        <a class = "nav-link" href="#"><i class="fas fa-shopping-cart" style="color:black; font: size 24px;"></i></a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-shopping-cart" style="color:black; font: size 24px;"></i></a>
                         </li>
                     </ul>
 

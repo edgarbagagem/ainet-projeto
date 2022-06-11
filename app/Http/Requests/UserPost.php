@@ -3,14 +3,15 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserPost extends FormRequest
 {
     /**
-    * Determine if the user is authorized to make this request.
-    *
-    * @return bool
-    */
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
     public function authorize()
     {
         return true;
@@ -18,17 +19,30 @@ class UserPost extends FormRequest
 
 
     /**
-    * Get the validation rules that apply to the request.
-    *
-    * @return array
-    */
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
     public function rules()
     {
+        //dd($this->user->id);
+
+        if (is_object($this->user)) {
+            $id = $this->user->id;
+        } else {
+            $id = null;
+        }
+
+
         return [
-            'user_id' => 'required|min:0',
-            'nome' => 'required',
-            'descricao' => 'max:100',
-            'saldo_abertura' => 'required|min:0',
+            'name' => 'required',
+            'tipo' => 'required',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($id),
+            ],
+            'foto' => 'nullable|image|max:8192',   // Máximum size = 8Mb
         ];
     }
 }
