@@ -27,7 +27,6 @@
                     <button class="btn btn-outline-secondary" type="submit">Filtrar</button>
                 </div>
             </div>
-
         </form>
 
         <div class="form-group">
@@ -39,7 +38,6 @@
 
         </div>
     </div>
-
 </div>
 
 <div class="row equal">

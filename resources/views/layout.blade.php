@@ -69,6 +69,23 @@
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
             @if(Auth()->check())
+            @if(Auth()->user()->tipo == 'F' )
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Divider -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('controloSessao.index')}}">
+                    <i class="fas fa-user-alt"></i>
+                    <span>Controlo de Sessão</span>
+                </a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            
+            @endif
+            @endif
+
+            @if(Auth()->check())
             @if(Auth()->user()->tipo == 'C' )
             <!-- Divider -->
             <hr class="sidebar-divider">

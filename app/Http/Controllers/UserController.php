@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Cliente;
 use App\Http\Requests\UserPost;
+use Carbon;
+use App\Models\Sessao;
+use App\Models\Bilhete;
+use App\Models\Filme;
+use App\Models\Sala;
 
 class UserController extends Controller
 {
@@ -234,6 +239,107 @@ class UserController extends Controller
         return redirect()->route('users.admin')
             ->with('alert-msg', 'user criado  com sucesso!')
             ->with('alert-type', 'success');
+    }
+
+    public function sessionControl(Request $request){
+
+        $filme = $request->filme ?? '';
+        $sala = $request->sala ?? '';
+      
+        $currentTime = Carbon\Carbon::now()->subMinute(5);
+        $format1 = 'Y-m-d';
+        $format2 = 'H:i:s';
+        $today = Carbon\Carbon::today();
+        $time = Carbon\Carbon::parse($currentTime)->format($format2);
+    
+        //sessoes todas
+        $sessoes = Sessao::query();
+
+        $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
+            ->join('filmes', 'filmes.id', '=', 'sessoes.filme_id')
+            ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
+            ->where('sessoes.data', '=', $today)
+            ->where('sessoes.horario_inicio', '>=', $time);
+
+
+
+            //filtrar filme
+        
+            $filmes = Filme::query();
+
+            $filmes = $filmes->select('filmes.titulo AS titulo')
+                ->join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
+                ->where('sessoes.data', '>=', $today)
+                ->where('sessoes.horario_inicio', '>=', $time)
+                ->groupBy('filmes.titulo');
+                
+
+            $filmes =  Filme::whereIn('titulo',$filmes)->pluck('titulo', 'id');
+            
+              if($filme){
+            $sessoes = $sessoes->where('filmes.id', '=', $filme);                 
+            }
+
+            /*
+            if($filme and $sala)
+                select as sessoes daquele filme como se ja fazia, e com aquela sala
+            */
+
+
+
+            //Filme selected
+            /*
+            $salasFilme = Sala::query();
+                
+            $salasFilme = $salasFilme->select('sala.nome')
+                ->join('sessoes', 'sala.id', '=', 'sessoes.sala_id')
+                ->join('filmes', 'sessoes.filmes_id', '=', 'filmes_id')
+                ->where('filmes.titulo', '=', $filme)
+                ->groupBy('sala.id')
+                ->get();
+            
+            $salasFilme = Sala::whereIn('nome', $salasFilme)->pluck('nome', 'id');
+
+            if($sala){
+                $salasFilme = $salasFilme->where('nome', $salasFilme);
+            }*/
+            $sessoes = $sessoes->paginate(10);
+
+        return view('controloSessao.index')->withSessoes($sessoes)->withFilmes($filmes)->withSelectedFilme($filme);//   ->withSalaFilme($salasFilme)->withSala($sala);
+    }
+
+    public function controlledSession($id){
+
+        $sessoes = Sessao::query();
+        $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
+        ->join('filmes', 'filmes.id', '=', 'sessoes.filme_id')
+        ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
+        ->where('sessoes.id', '=', $id)->paginate(1);
+
+
+        return view('controloSessao.validate')->withSessao($sessoes);
+
+    }
+
+    public function validateTickets($id){
+        $bilhete = Bilhete::query();
+        $bilhete = $bilhete->select('id as id')->where('id', '=', $id);
+        dd($bilhete);
+        if (count($bilhete) < 1) {
+            return redirect()->route('controloSessao.validate')
+            ->with('alert-msg', 'Bilhete Inválido! "' . $id  . '". Erro: Bilhete não existe')
+            ->with('alert-type', 'danger');
+        }else{
+            return redirect()->route('controloSessao.validate')
+            ->with('alert-msg', 'Bilhete Válido!')
+            ->with('alert-type', 'success');
+        }
+
+        //ver se bilhete existe
+
+        //se é desta sessão
+
+        //se já foi usado
     }
 
     /*

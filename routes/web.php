@@ -82,3 +82,9 @@ Route::post('/administracao', [UserController::class, 'admin_store'])->name('use
 
 //carrinho
 Route::get('/carrinho/{id}', [CartController::class, 'index'])->name('add.cart');
+
+
+//Controlo de Sessão
+Route::get('/controloSessao', [UserController::class, 'sessionControl'])->name('controloSessao.index'); //ver se é preciso middleware c eddy
+Route::get('/controloSessao/bilhetes/{id}', [UserController::class, 'controlledSession'])->name('controloSessao.sessao'); 
+Route::put('/controloSessao/bilhetes/{id}', [UserController::class, 'validateTickets'])->name('controloSessao.validate');
