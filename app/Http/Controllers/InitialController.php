@@ -29,8 +29,13 @@ class InitialController extends Controller
 
         $filmes = $filmes->select('filmes.id', 'filmes.titulo', 'filmes.sumario', 'filmes.cartaz_url', 'filmes.trailer_url', 'filmes.genero_code')
             ->join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
-            ->where('sessoes.data', '>=', $data)
-            ->where('sessoes.horario_inicio', '>=', $time)
+            ->where(function ($query) use ($data, $time) {
+                $query->where('sessoes.data', '>', $data)
+                    ->orWhere(function ($query1) use ($data, $time) {
+                        $query1->where('sessoes.data', '=', $data)
+                            ->where('sessoes.horario_inicio', '>=', $time);
+                    });
+            })
             ->groupBy('filmes.id')
             ->groupBy('filmes.titulo')
             ->groupBy('filmes.sumario')
@@ -40,12 +45,17 @@ class InitialController extends Controller
 
         $generos = Filme::select('filmes.genero_code')
             ->join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
-            ->where('sessoes.data', '>=', $data)
-            ->where('sessoes.horario_inicio', '>=', $time)
+            ->where(function ($query) use ($data, $time) {
+                $query->where('sessoes.data', '>', $data)
+                    ->orWhere(function ($query1) use ($data, $time) {
+                        $query1->where('sessoes.data', '=', $data)
+                            ->where('sessoes.horario_inicio', '>=', $time);
+                    });
+            })
             ->groupBy('filmes.genero_code')
             ->get();
 
-        $generos = Genero::whereIn('code', $generos)->pluck('code', 'nome');
+        $generos = Genero::whereIn('code', $generos)->pluck('nome', 'code');
 
         if ($genero) {
             $filmes = $filmes->where('genero_code', $genero);

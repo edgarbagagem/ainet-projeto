@@ -4,7 +4,7 @@
 <form method="POST" action="{{route('users.admin.update', ['user'=>$user])}}" class="form-group" enctype="multipart/form-data" novalidate>
     @csrf
     @method('PUT')
-    @include('administracao.partials.create-edit')
+    @include('administracao.users.partials.create-edit')
     <div class="form-group text-right">
         @can('update', $user)
         <button type="submit" class="btn btn-success" name="ok">Save</button>
