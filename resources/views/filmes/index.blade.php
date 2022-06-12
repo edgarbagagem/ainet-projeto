@@ -19,8 +19,8 @@
                 <select class="custom-select" name="genero" id="inputGenero" aria-label="Genero">
                     <option value="" {{'' == old('genero', $selectedGenero) ? 'selected' : ''}}>Todos
                         Géneros</option>
-                    @foreach ($generos as $genero)
-                    <option value={{$genero}} {{$genero == old('genero', $selectedGenero) ? 'selected' : ''}}>{{$genero}}</option>
+                    @foreach ($generos as $code=>$genero)
+                    <option value={{$code}} {{$genero == old('genero', $selectedGenero) ? 'selected' : ''}}>{{$genero}}</option>
                     @endforeach
                 </select>
                 <div class="input-group-append">
@@ -44,11 +44,11 @@
     @foreach($filmes as $filme)
     <div class="col-sm-4 d-flex pb-3">
         <div class="card" style="width: 18rem;">
-        @if(!is_null($filme->cartaz_url))
+            @if(!is_null($filme->cartaz_url))
             <img class="card-img-top" src="{{$filme->cartaz_url ?
          asset('storage/cartazes/' . $filme->cartaz_url) :
          asset('img/default_img.png') }}" alt="Cartaz do filme">
-         @endif
+            @endif
             <div class="card-body">
 
                 <h5 class="carad-title">{{$filme->titulo}}</h5>
@@ -58,7 +58,7 @@
 
             <div class="d-flex align-items-end">
                 <div class="card-body">
-                @if(!is_null($filme->trailer_url))
+                    @if(!is_null($filme->trailer_url))
                     <p><i class="fas fa-eye"></i><a class="card-link" href="{{$filme->trailer_url}}"> Trailer </a></p>
                     @endif
                     <p><i class="fas fa-fast-forward"></i> <a class="card-link" href="{{route('sessoes.filme', ['id' => $filme->id])}}"> Sessões </a></p>

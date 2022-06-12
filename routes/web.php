@@ -7,6 +7,7 @@ use App\Http\Controllers\SessaoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ConfigurationController;
 
 
 /*
@@ -79,6 +80,16 @@ Route::get('/admininistracao/create', [UserController::class, 'admin_create'])->
 
 Route::post('/administracao', [UserController::class, 'admin_store'])->name('users.admin.store')
     ->middleware('can:create,App\Models\User');
+
+//administracao negocio
+
+Route::get('/config', [ConfigurationController::class, 'index'])->name('config.index')->middleware('admin');
+Route::put('/config', [ConfigurationController::class, 'save_config'])->name('config.save')->middleware('admin');
+Route::get('/config/create_sala', [ConfigurationController::class, 'create_sala'])->name('config.create.sala')->middleware('admin');
+Route::post('/config', [ConfigurationController::class, 'store_sala'])->name('config.store.sala')->middleware('admin');
+Route::get('/config/edit/{sala}', [ConfigurationController::class, 'edit_sala'])->name('config.edit.sala')->middleware('admin');
+Route::put('/config/edit/{sala}', [ConfigurationController::class, 'update_sala'])->name('config.update.sala')->middleware('admin');
+Route::delete('/config/{sala}', [ConfigurationController::class, 'delete_sala'])->name('config.delete.sala')->middleware('admin');
 
 //carrinho
 Route::get('/carrinho/{id}', [CartController::class, 'index'])->name('add.cart');

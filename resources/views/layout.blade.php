@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Dashboard</title>
+    <title>CineMagic</title>
 
     <!-- Custom fonts for this template-->
 
@@ -97,10 +97,20 @@
                     <span>Dados do Utilizador</span>
                 </a>
             </li>
+
+            @endif
+
+            @if(Auth()->user()->tipo == 'A' )
             <!-- Divider -->
             <hr class="sidebar-divider">
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('users.admin.consultar', ['user'=>Auth()->user()])}}">
+                    <i class="fas fa-user-alt"></i>
+                    <span>Dados do Utilizador</span>
+                </a>
+            </li>
             @endif
             @endif
 
@@ -136,6 +146,21 @@
             <hr class="sidebar-divider d-none d-md-block">
             @endcan
 
+            <!-- NAV ITEM -->
+            @if(Auth()->check())
+            @if(Auth()->user()->tipo == 'A' )
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('config.index')}}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Administração de Negócio</span>
+                </a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+            @endif
+            @endif
         </ul>
         <!-- End of Sidebar -->
 
@@ -172,6 +197,12 @@
 
                                 @if(Auth()->user()->tipo == 'C' )
                                 <a class="dropdown-item" href="{{ route('index.user')}}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Perfil
+                                </a>
+                                @endif
+                                @if(Auth()->user()->tipo == 'A' )
+                                <a class="dropdown-item" href="{{ route('users.admin.consultar', ['user' => Auth()->user()])}}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Perfil
                                 </a>

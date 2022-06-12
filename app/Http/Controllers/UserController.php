@@ -140,7 +140,7 @@ class UserController extends Controller
         }
 
         $users = $users->paginate(10);
-        return view('administracao.index')->withUsers($users);
+        return view('administracao.users.index')->withUsers($users);
     }
 
     public function admin_delete(User $user)
@@ -191,12 +191,12 @@ class UserController extends Controller
 
     public function admin_consultar(User $user)
     {
-        return view('administracao.consultar')->withUser($user);
+        return view('administracao.users.consultar')->withUser($user);
     }
 
     public function admin_editar(User $user)
     {
-        return view('administracao.edit')->withUser($user);
+        return view('administracao.users.edit')->withUser($user);
     }
 
     public function admin_updateUser(UserPost $request, User $user)
@@ -219,7 +219,7 @@ class UserController extends Controller
     public function admin_create()
     {
         $newUser = new User;
-        return view('administracao.create')->withUser($newUser);
+        return view('administracao.users.create')->withUser($newUser);
     }
 
     public function admin_store(UserPost $request)

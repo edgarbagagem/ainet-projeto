@@ -23,8 +23,13 @@ class SessaoController extends Controller
         $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
             ->join('filmes', 'filmes.id', '=', 'sessoes.filme_id')
             ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
-            ->where('sessoes.data', '>=', $data)
-            ->where('sessoes.horario_inicio', '>=', $time)
+            ->where(function ($query) use ($data, $time) {
+                $query->where('sessoes.data', '>', $data)
+                    ->orWhere(function ($query1) use ($data, $time) {
+                        $query1->where('sessoes.data', '=', $data)
+                            ->where('sessoes.horario_inicio', '>=', $time);
+                    });
+            })
             ->paginate(10);
 
 
@@ -54,8 +59,13 @@ class SessaoController extends Controller
         $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
             ->join('filmes', 'filmes.id', '=', 'sessoes.filme_id')
             ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
-            ->where('sessoes.data', '>=', $data)
-            ->where('sessoes.horario_inicio', '>=', $time)
+            ->where(function ($query) use ($data, $time) {
+                $query->where('sessoes.data', '>', $data)
+                    ->orWhere(function ($query1) use ($data, $time) {
+                        $query1->where('sessoes.data', '=', $data)
+                            ->where('sessoes.horario_inicio', '>=', $time);
+                    });
+            })
             ->where('sessoes.filme_id', '=', $id)
             ->paginate(10);
 
