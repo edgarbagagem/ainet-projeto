@@ -5,25 +5,48 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Sala;
+use App\Models\Filme;
+use App\Models\Sessao;
+use App\Models\Genero;
+use Carbon;
+use App\Http\Requests\FilmePost;
+
 
 class ConfigurationController extends Controller
 {
 
     public $alphabet = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
-    public function index()
+    public function index(Request $request)
     {
+
+        $substring = $request->substring ?? '';
+
         $configuracao = DB::table('configuracao')->first();
 
         $salas = Sala::query();
-        $salas = $salas->paginate(10);
+        $salas = $salas->paginate(10, '*', 'salas');
 
         foreach ($salas as $sala) {
             $totalLugares = DB::table('lugares')->where('sala_id', '=', $sala->id)->count();
             $sala->lugares = $totalLugares;
         }
+
+        $filmes = Filme::query();
+
+        if ($substring) {
+            $filmes = $filmes->where('titulo', 'LIKE', "%{$substring}%");
+        }
+
+        $filmes = $filmes->paginate(10, '*', 'filmes');
+
+        foreach ($filmes as $filme) {
+            $filme->sessaoCount = Sessao::where('sessoes.filme_id', '=', $filme->id)->count();
+        }
+
         return view('administracao.negocio')->withConfiguracao($configuracao)
-            ->withSalas($salas);
+            ->withSalas($salas)
+            ->withFilmes($filmes);
     }
 
     public function save_config(Request $request)
@@ -96,7 +119,7 @@ class ConfigurationController extends Controller
     {
         //Guardar filas e colunas na coluna custom da tabela da sala 
         //para no caso de se restorar a sala saber o numero de lugares a serem criados de volta
-
+        $oldID = $sala->id;
 
         $lugares = DB::table('lugares')->where('sala_id', '=', $sala->id)->count();
         $colunas = DB::table('lugares')->where('sala_id', '=', $sala->id)->groupBy('fila')->count();
@@ -123,8 +146,93 @@ class ConfigurationController extends Controller
             // Descomentar a próxima linha para verificar qual a informação que a exceção tem
             //dd($th, $th->errorInfo);
             return redirect()->route('config.index')
-                ->with('alert-msg', 'Não foi possível apagar a sala"' . $sala->id   . '". Erro: ' . $th->errorInfo[2])
+                ->with('alert-msg', 'Não foi possível apagar a sala"' . $oldID  . '". Erro: ' . $th->errorInfo[2])
                 ->with('alert-type', 'danger');
         }
+    }
+
+    public function create_filme()
+    {
+        $filme = new Filme;
+
+        $generos = Genero::pluck('nome', 'code');
+
+        return view('administracao.filmes.create')->withFilme($filme)->withGeneros($generos);
+    }
+
+    public function store_filme(FilmePost $request)
+    {
+
+        $mytime = Carbon\Carbon::now();
+        $format1 = 'Y';
+        $ano = Carbon\Carbon::parse($mytime)->format($format1);
+
+
+        $validated_data = $request->validated();
+
+        $filme = new Filme;
+        $filme->titulo = $validated_data['titulo'];
+        $filme->genero_code = $validated_data['genero_code'];
+        $filme->sumario = $validated_data['sumario'];
+        $filme->trailer_url = $request->trailer_url;
+        $filme->ano = $ano;
+        if ($request->hasFile('cartaz')) {
+            $path = 'storage/cartazes/';
+            $filme->cartaz_url = $request->file('cartaz')->getClientOriginalName();
+            $request->cartaz->move($path, $filme->cartaz_url);
+        }
+
+        $filme->save();
+
+        return redirect()->route('config.index')->with('alert-msg', 'Filme Criado Com Sucesso')
+            ->with('alert-type', 'success');
+    }
+
+    public function delete_filme(Filme $filme)
+    {
+
+        $oldID = $filme->id;
+
+        try {
+            $filme->delete();
+
+            return redirect()->route('config.index')
+                ->with('alert-msg', 'Filme foi apagado com sucesso!')
+                ->with('alert-type', 'success');
+        } catch (\Throwable $th) {
+            // $th é a exceção lançada pelo sistema - por norma, erro ocorre no servidor BD MySQL
+            // Descomentar a próxima linha para verificar qual a informação que a exceção tem
+            //dd($th, $th->errorInfo);
+            return redirect()->route('config.index')
+                ->with('alert-msg', 'Não foi possível apagar o filme"' . $oldID  . '". Erro: ' . $th->errorInfo[2])
+                ->with('alert-type', 'danger');
+        }
+    }
+
+    public function edit_filme(Filme $filme)
+    {
+        $generos = Genero::pluck('nome', 'code');
+        return view('administracao.filmes.edit')->withGeneros($generos)->withFilme($filme);
+    }
+
+    public function update_filme(FilmePost $request, Filme $filme)
+    {
+        $validated_data = $request->validated();
+
+        $filme->titulo = $validated_data['titulo'];
+        $filme->genero_code = $validated_data['genero_code'];
+        $filme->sumario = $validated_data['sumario'];
+        $filme->trailer_url = $request->trailer_url;
+
+        if ($request->hasFile('cartaz')) {
+            $path = 'storage/cartazes/';
+            $filme->cartaz_url = $request->file('cartaz')->getClientOriginalName();
+            $request->cartaz->move($path, $filme->cartaz_url);
+        }
+
+        $filme->save();
+
+        return redirect()->route('config.index')->with('alert-msg', 'Filme alterado Com Sucesso')
+            ->with('alert-type', 'success');
     }
 }

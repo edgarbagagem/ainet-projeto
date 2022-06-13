@@ -82,14 +82,20 @@ Route::post('/administracao', [UserController::class, 'admin_store'])->name('use
     ->middleware('can:create,App\Models\User');
 
 //administracao negocio
-
 Route::get('/config', [ConfigurationController::class, 'index'])->name('config.index')->middleware('admin');
+//configuracao
 Route::put('/config', [ConfigurationController::class, 'save_config'])->name('config.save')->middleware('admin');
+//salas
 Route::get('/config/create_sala', [ConfigurationController::class, 'create_sala'])->name('config.create.sala')->middleware('admin');
-Route::post('/config', [ConfigurationController::class, 'store_sala'])->name('config.store.sala')->middleware('admin');
-Route::get('/config/edit/{sala}', [ConfigurationController::class, 'edit_sala'])->name('config.edit.sala')->middleware('admin');
-Route::put('/config/edit/{sala}', [ConfigurationController::class, 'update_sala'])->name('config.update.sala')->middleware('admin');
-Route::delete('/config/{sala}', [ConfigurationController::class, 'delete_sala'])->name('config.delete.sala')->middleware('admin');
-
+Route::post('/config/sala/store', [ConfigurationController::class, 'store_sala'])->name('config.store.sala')->middleware('admin');
+Route::get('/config/sala/edit/{sala}', [ConfigurationController::class, 'edit_sala'])->name('config.edit.sala')->middleware('admin');
+Route::put('/config/sala/edit/{sala}', [ConfigurationController::class, 'update_sala'])->name('config.update.sala')->middleware('admin');
+Route::delete('/config/sala/{sala}', [ConfigurationController::class, 'delete_sala'])->name('config.delete.sala')->middleware('admin');
+//filme
+Route::get('/config/create_filme', [ConfigurationController::class, 'create_filme'])->name('config.create.filme')->middleware('admin');
+Route::post('/config', [ConfigurationController::class, 'store_filme'])->name('config.store.filme')->middleware('admin');
+Route::delete('/config/filme/{filme}', [ConfigurationController::class, 'delete_filme'])->name('config.delete.filme')->middleware('admin');
+Route::get('/config/filme/edit/{filme}', [ConfigurationController::class, 'edit_filme'])->name('config.edit.filme')->middleware('admin');
+Route::put('/config/filme/edit/{filme}', [ConfigurationController::class, 'update_filme'])->name('config.update.filme')->middleware('admin');
 //carrinho
 Route::get('/carrinho/{id}', [CartController::class, 'index'])->name('add.cart');

@@ -21,9 +21,9 @@
     <tbody>
         @foreach ($sessoes as $sessao)
         <?php
-        $lugaresDisponiveis = ($sessao->totalLugares)-($sessao->lugaresOcupados);
+        $lugaresDisponiveis = ($sessao->totalLugares) - ($sessao->lugaresOcupados);
         ?>
-        
+
         <tr>
             <td>{{$sessao->titulo}}</td>
             <td>{{$sessao->data}}</td>
@@ -31,25 +31,10 @@
             <td>{{$sessao->sala}}</td>
             <td>{{$lugaresDisponiveis}}</td>
             <td>
-                        <a class="card-link" href="{{route('add.cart', ['id' => $sessao->id])}}">Adicionar ao Carrinho</a>
+                <a class="card-link" href="{{route('add.cart', ['id' => $sessao->id])}}">Adicionar ao Carrinho</a>
             </td>
-
-            <!--<td>
-                @can('view', $sessao)
-                <a href="{{route('admin.sessaos.edit', ['sessao' => $sessao]) }}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Alterar</a>
-                @endcan
-            </td> -->
-            <!-- <td>
-                @can('delete', $sessao)
-                <form action="{{route('admin.sessoes.destroy', ['sessao' => $sessao]) }}"" method=" POST">
-                    @csrf
-                    @method("DELETE")
-                    <input type="submit" class="btn btn-danger btn-sm" value="Apagar">
-                </form>
-                @endcan
-            </td> -->
         </tr>
-</form>
+        </form>
         @endforeach
     </tbody>
     {{$sessoes->withQueryString()->links()}}

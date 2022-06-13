@@ -15,6 +15,7 @@ class ClientePolicy
      *
      * @return void
      */
+
     public function viewAny(User $user)
     {
         return $user->tipo == 'A';
