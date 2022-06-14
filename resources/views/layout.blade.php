@@ -62,25 +62,28 @@
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
             @if(Auth()->check())
             @if(Auth()->user()->tipo == 'C' )
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+
             <li class="nav-item">
                 <a class="nav-link" href="{{route('index.user')}}">
                     <i class="fas fa-user-alt"></i>
                     <span>Dados do Utilizador</span>
                 </a>
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+                <!-- Divider -->
+                <hr class="sidebar-divider d-none d-md-block">
             </li>
 
             @endif
+            @endif
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
 
+            @if(Auth()->check())
             @if(Auth()->user()->tipo == 'A' )
             <!-- Divider -->
             <hr class="sidebar-divider">

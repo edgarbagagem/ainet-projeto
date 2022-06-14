@@ -103,6 +103,7 @@
                     <th>Título</th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -127,6 +128,9 @@
                             <input type="submit" class="btn btn-danger btn-sm" value="Apagar">
                         </form>
                         @endif
+                    </td>
+                    <td>
+                        <a href="{{route('sessoes.filme', ['id' => $filme->id])}}" class="btn btn-primary" role="button" aria-pressed="true">Sessões</a>
                     </td>
                 </tr>
                 @endforeach

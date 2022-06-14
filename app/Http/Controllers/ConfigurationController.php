@@ -10,7 +10,7 @@ use App\Models\Sessao;
 use App\Models\Genero;
 use Carbon;
 use App\Http\Requests\FilmePost;
-
+use App\Http\Requests\SessaoPost;
 
 class ConfigurationController extends Controller
 {
@@ -234,5 +234,94 @@ class ConfigurationController extends Controller
 
         return redirect()->route('config.index')->with('alert-msg', 'Filme alterado Com Sucesso')
             ->with('alert-type', 'success');
+    }
+
+    public function create_sessao($id)
+    {
+
+        $salas = Sala::pluck('nome', 'id');
+
+        return view('administracao.sessoes.create')->withSalas($salas)->withId($id);
+    }
+
+    public function store_sessao(Request $request, $id)
+    {
+        $request->validate([
+            'sessao.*.sala_id' => 'required',
+            'sessao.*.data' => 'required',
+            'sessao.*.horario_inicio' => 'required',
+        ]);
+
+        foreach ($request->sessao as $sessao) {
+            for ($i = 0; $i < $sessao['dias']; $i++) {
+                $data = Carbon\Carbon::createFromFormat('Y-m-d', $sessao['data']);
+
+                if ($i > 0) {
+                    $data->addDay();
+                }
+
+                $data = Carbon\Carbon::parse($data)->format('Y-m-d');
+
+                $novaSessao = new Sessao;
+                $novaSessao->filme_id = $id;
+                $novaSessao->sala_id = $sessao['sala_id'];
+                $novaSessao->data = $data;
+                $novaSessao->horario_inicio = $sessao['horario_inicio'];
+
+                $novaSessao->save();
+            }
+        }
+
+        return redirect()->route('sessoes.filme', ['id' => $id])->with('alert-msg', 'Sessão Criada Com Sucesso')
+            ->with('alert-type', 'success');
+    }
+
+    public function edit_sessao(Sessao $sessao, $id)
+    {
+
+        $salas = Sala::pluck('nome', 'id');
+
+        return view('administracao.sessoes.edit')->withSalas($salas)->withId($id)->withSessao($sessao);
+    }
+
+    public function update_sessao(SessaoPost $request, $id)
+    {
+        $sessao = $request->validated();
+
+
+        $novaSessao = new Sessao;
+        $novaSessao->filme_id = $id;
+        $novaSessao->sala_id = $sessao['sala_id'];
+        $novaSessao->data = $sessao['data'];
+        $novaSessao->horario_inicio = $sessao['horario_inicio'];
+
+        $novaSessao->save();
+
+        return redirect()->route('sessoes.filme', ['id' => $id])->with('alert-msg', 'Sessão alterada Com Sucesso')
+            ->with('alert-type', 'success');
+    }
+
+    public function delete_sessao(Sessao $sessao)
+    {
+
+        $oldID = $sessao->id;
+        $filmeID = $sessao->filme_id;
+
+        $sessao = Sessao::find($oldID);
+
+        try {
+            $sessao->delete();
+
+            return redirect()->route('sessoes.filme', ['id' => $filmeID])
+                ->with('alert-msg', 'Sessão foi apagada com sucesso!')
+                ->with('alert-type', 'success');
+        } catch (\Throwable $th) {
+            // $th é a exceção lançada pelo sistema - por norma, erro ocorre no servidor BD MySQL
+            // Descomentar a próxima linha para verificar qual a informação que a exceção tem
+            //dd($th, $th->errorInfo);
+            return redirect()->route('sessoes.filme', ['id' => $filmeID])
+                ->with('alert-msg', 'Não foi possível apagar a Sessão"' . $oldID  . '". Erro: ' . $th->errorInfo[2])
+                ->with('alert-type', 'danger');
+        }
     }
 }
