@@ -22,18 +22,6 @@
                         <button class="btn btn-outline-secondary" type="submit">Filtrar</button>
                     </div>
                 </div>
-<<<<<<< HEAD
-            </div>
-        </form>
-
-        <div class="form-group">
-            <form method="GET" action="{{route('filmes.index')}}" class="form-inline">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="substring">
-                <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
-                <button class="btn btn-outline-primary my-2 my-sm-0" style="margin-left: 0.5rem" type="submit" value=""> Repor</button>
-=======
-
->>>>>>> 412a927da481f6c8092caac1a048b5cd102fcd14
             </form>
 
             <div class="form-group">
@@ -47,16 +35,6 @@
         </div>
 
     </div>
-<<<<<<< HEAD
-</div>
-
-<div class="row equal">
-    @foreach($filmes as $filme)
-    <div class="col-sm-4 d-flex pb-3">
-        <div class="card" style="width: 18rem;">
-            @if(!is_null($filme->cartaz_url))
-            <img class="card-img-top" src="{{$filme->cartaz_url ?
-=======
 
     <div class="row equal">
         @foreach($filmes as $filme)
@@ -64,7 +42,6 @@
             <div class="card" style="width: 18rem;">
                 @if(!is_null($filme->cartaz_url))
                 <img class="card-img-top" src="{{$filme->cartaz_url ?
->>>>>>> 412a927da481f6c8092caac1a048b5cd102fcd14
          asset('storage/cartazes/' . $filme->cartaz_url) :
          asset('img/default_img.png') }}" alt="Cartaz do filme">
                 @endif

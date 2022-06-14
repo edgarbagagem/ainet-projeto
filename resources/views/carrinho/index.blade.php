@@ -79,6 +79,8 @@ $precoCompra += $precoCadaBilhete * $row['qtd'];
 ?>
 {{ number_format($precoCompra, 2, '.', ' ') }} €
 </td>
+
+
 <td>{{$configuracao->percentagem_iva}} %</td>
         </tr>
         @endforeach

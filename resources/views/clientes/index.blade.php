@@ -2,15 +2,6 @@
 @section('title','Clientes' )
 @section('content')
 
-<<<<<<< HEAD
-<div class="form-group">
-    <form method="GET" action="form-inline">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="substring">
-        <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
-        <button class="btn btn-outline-primary my-2 my-sm-0" style="margin-left: 0.5rem" type="submit" value=""> Repor</button>
-    </form>
-=======
->>>>>>> 412a927da481f6c8092caac1a048b5cd102fcd14
 
 <form method="GET" action="{{route('clientes.index')}}" class="form-inline">
     <div class="form-row">

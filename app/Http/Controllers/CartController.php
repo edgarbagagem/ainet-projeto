@@ -164,7 +164,6 @@ class CartController extends Controller
                 $recibo->preco_total_com_iva = 8.85*(8.85*0.13);
                 $recibo_id = Recibo::query();
                 $recibo_id = $recibo_id->select('id as id')->orderBy('id','DESC')->first();
-                $recibo_id
                 dd($recibo_id);
                 $recibo->save();
 
