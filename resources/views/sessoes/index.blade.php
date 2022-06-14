@@ -31,7 +31,11 @@
             <td>{{$sessao->sala}}</td>
             <td>{{$lugaresDisponiveis}}</td>
             <td>
-                        <a class="card-link" href="{{route('add.cart', ['id' => $sessao->id])}}">Adicionar ao Carrinho</a>
+            <form action="{{route('carrinho.store_bilhete', $sessao)}}" method="POST">
+                @csrf
+                
+                <button type="submit" class="btn btn-primary" name="ok">Adicionar Bilhete ao Carrinho</button>
+            </form>
             </td>
 
             <!--<td>

@@ -245,12 +245,12 @@ class UserController extends Controller
 
         $filme = $request->filme ?? '';
         $sala = $request->sala ?? '';
-      
-        $currentTime = Carbon\Carbon::now()->subMinute(5);
+
+        $mytime = Carbon\Carbon::now()->subminute(5);
         $format1 = 'Y-m-d';
         $format2 = 'H:i:s';
-        $today = Carbon\Carbon::today();
-        $time = Carbon\Carbon::parse($currentTime)->format($format2);
+        $data = Carbon\Carbon::parse($mytime)->format($format1);
+        $time = Carbon\Carbon::parse($mytime)->format($format2);
     
         //sessoes todas
         $sessoes = Sessao::query();
@@ -258,8 +258,14 @@ class UserController extends Controller
         $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
             ->join('filmes', 'filmes.id', '=', 'sessoes.filme_id')
             ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
-            ->where('sessoes.data', '=', $today)
-            ->where('sessoes.horario_inicio', '>=', $time);
+            ->where(function ($query) use ($data, $time) {
+                $query->where('sessoes.data', '>', $data)
+                    ->orWhere(function ($query1) use ($data, $time) {
+                        $query1->where('sessoes.data', '=', $data)
+                            ->where('sessoes.horario_inicio', '>=', $time);
+                    });
+            });
+            
 
 
 
@@ -269,8 +275,13 @@ class UserController extends Controller
 
             $filmes = $filmes->select('filmes.titulo AS titulo')
                 ->join('sessoes', 'filmes.id', '=', 'sessoes.filme_id')
-                ->where('sessoes.data', '>=', $today)
-                ->where('sessoes.horario_inicio', '>=', $time)
+                ->where(function ($query) use ($data, $time) {
+                    $query->where('sessoes.data', '>', $data)
+                        ->orWhere(function ($query1) use ($data, $time) {
+                            $query1->where('sessoes.data', '=', $data)
+                                ->where('sessoes.horario_inicio', '>=', $time);
+                        });
+                })
                 ->groupBy('filmes.titulo');
                 
 
@@ -314,33 +325,60 @@ class UserController extends Controller
         $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
         ->join('filmes', 'filmes.id', '=', 'sessoes.filme_id')
         ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
-        ->where('sessoes.id', '=', $id)->paginate(1);
+        ->where('sessoes.id', '=', $id)->first();
 
 
         return view('controloSessao.validate')->withSessao($sessoes);
 
     }
 
-    public function validateTickets($id){
+    public function validateTickets(Request $request, Sessao $sessao){
+    
+        $id = $request['id'];
+
         $bilhete = Bilhete::query();
-        $bilhete = $bilhete->select('id as id')->where('id', '=', $id);
-        dd($bilhete);
-        if (count($bilhete) < 1) {
-            return redirect()->route('controloSessao.validate')
-            ->with('alert-msg', 'Bilhete Inválido! "' . $id  . '". Erro: Bilhete não existe')
+        $bilhete = $bilhete->where('id', '=', $id)->first();
+        $bilheteCount = Bilhete::query();
+        $bilheteCount = $bilheteCount->where('id', '=', $id)->count();
+        $str = "não usado";
+
+        if($bilheteCount < 1){
+            return redirect()->route('controloSessao.sessao', ['id' => $sessao->id])
+            ->with('alert-msg', 'Bilhete "' . $id . '" não existe!')
             ->with('alert-type', 'danger');
         }else{
-            return redirect()->route('controloSessao.validate')
-            ->with('alert-msg', 'Bilhete Válido!')
-            ->with('alert-type', 'success');
+
+        if($bilhete->sessao_id != $sessao->id){
+            return redirect()->route('controloSessao.sessao', ['id' => $sessao->id])
+            ->with('alert-msg', 'Bilhete "' . $id . '" não é desta sessão!')
+            ->with('alert-type', 'danger');
+        }else{
+
+
+        if (strcmp($bilhete->estado, $str) == 0) {
+            $bilhete->estado = "usado";
+            $bilhete->save();
+
+            return redirect()->route('controloSessao.sessao', ['id' => $sessao->id])
+                ->with('alert-msg', 'Bilhete "' . $id . '" foi validado com sucesso!')
+                ->with('alert-type', 'success');
+        }else{
+            return redirect()->route('controloSessao.sessao', ['id' => $sessao->id])
+            ->with('alert-msg', 'Bilhete "' . $id . '" já foi usado!')
+            ->with('alert-type', 'danger');
         }
-
-        //ver se bilhete existe
-
-        //se é desta sessão
-
-        //se já foi usado
     }
+    }
+
+}
+
+public function showTicket(Bilhete $bilhete){
+
+    return view('controloSessao.validate')->withBilhete($bilhete);
+}
+
+
+}
 
     /*
 public function resetPassword(Request $request)
@@ -388,4 +426,4 @@ public function resetPassword(Request $request)
 }
 }
 */
-}
+

@@ -221,7 +221,7 @@
                         </li>
                         @endguest
                         <li class="nav-item">
-                            <a class="nav-link" href="#"><i class="fas fa-shopping-cart" style="color:black; font: size 24px;"></i></a>
+                            <a class="nav-link" href="{{route('carrinho.index')}}"><i class="fas fa-shopping-cart" style="color:black; font: size 24px;"></i></a>
                         </li>
                     </ul>
 

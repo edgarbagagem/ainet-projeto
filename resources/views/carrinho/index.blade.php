@@ -8,53 +8,102 @@
     @endcan
 </div> -->
 
-<table class="table">
+<div>
+    <p>
+        <form action="{{ route('carrinho.destroy') }}" method="POST">
+            @csrf
+            @method("DELETE")
+            <button type="submit" class="btn btn-primary" name="destroy">Limpar carrinho</button>
+        </form>
+</p>
+</div>
+ <table class="table">
     <thead>
         <tr>
-            <th>Título</th>
-            <th>Data</th>
-            <th>Hora</th>
+            <th>Quantidade</th>
+            <th>Titulo</th>
+            <th>Hora de Inicio</th>
             <th>Sala</th>
-            <th>Lugares Disponíveis</th>
-            <th>Quantidade de Bilhetes</th>
+            <th>Data</th>
             <th></th>
-        </tr>
+            <th></th>
+            <th></th>
+            <th>Preço c/ IVA</th>
+            <th>IVA</th>
     </thead>
     <tbody>
-        @foreach ($sessoes as $sessao)
-        <?php
-        $lugaresDisponiveis = ($sessao->totalLugares)-($sessao->lugaresOcupados);
-        ?>
-        
-        <tr>
-            <td>{{$sessao->titulo}}</td>
-            <td>{{$sessao->data}}</td>
-            <td>{{$sessao->horario_inicio}}</td>
-            <td>{{$sessao->sala}}</td>
-            <td>{{$lugaresDisponiveis}}</td>
-            <td><input type="number" id="numeroBilhetes" name="numBilhetes" min="1" max="10" placeholder="0"></td>
-            <td><input type="button" onclick="CalculatePrice()" value="Calcular Preço Final"></td>
+
+    @foreach ($carrinho as $row)
+    <tr>
+        <td>{{ $row['qtd'] }} </td>
+        <td>{{ $row['titulo'] }} </td>
+        <td>{{ $row['horario_inicio'] }} </td>
+        <td>{{ $row['sala'] }} </td>
+        <td>{{ $row['data'] }} </td>
+        <td>
+            <form action="{{route('carrinho.update_sessao', $row['id'])}}" method="POST">
+                @csrf
+                @method('put')
+                <input type="hidden" name="quantidade" value="1">
+                <button type="submit" class="btn btn-success btn-sm" name="store">Incrementar</button>
+            </form>
+        </td>
+        <td>
+            <form action="{{route('carrinho.update_sessao', $row['id'])}}" method="POST">
+                @csrf
+                @method('put')
+                <input type="hidden" name="quantidade" value="-1">
+                <button type="submit" class="btn btn-danger btn-sm" name="decrement">Decrementar</button>
+            </form>
+        </td>
+        <td>
+            <form action="{{route('carrinho.destroy_sessao', $row['id'])}}" method="POST">
+                @csrf
+                @method('delete')
+                <button type="submit" class="btn btn-warning btn-sm" name="remove">Remover</button>
+            </form>
+</td>
+<td>
+<?php
+$precoCompra = 0;
+$iva = $configuracao->percentagem_iva / 100;
+$precoCadaBilhete = $configuracao->preco_bilhete_sem_iva + ($configuracao->preco_bilhete_sem_iva * $iva);
+if($row['qtd'] != 0){
+$precoCompra += $precoCadaBilhete * $row['qtd']; 
+}if($row['qtd'] == 0){
+    $precoCompra = 0;
+
+}
 
 
-            <!--<td>
-                @can('view', $sessao)
-                <a href="{{route('admin.sessaos.edit', ['sessao' => $sessao]) }}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Alterar</a>
-                @endcan
-            </td> -->
-            <!-- <td>
-                @can('delete', $sessao)
-                <form action="{{route('admin.sessoes.destroy', ['sessao' => $sessao]) }}"" method=" POST">
-                    @csrf
-                    @method("DELETE")
-                    <input type="submit" class="btn btn-danger btn-sm" value="Apagar">
-                </form>
-                @endcan
-            </td> -->
+?>
+{{ number_format($precoCompra, 2, '.', ' ') }} €
+</td>
+<td>{{$configuracao->percentagem_iva}} %</td>
         </tr>
-</form>
         @endforeach
-    </tbody>
+     </tbody>
 </table>
+<hr>
+<br></br>
+@if (Auth::check())
+<div>
+    <p></p>
+         <form action="{{ route('carrinho.preparePayment') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-dark" name="confirm">Confirmar Carrinho</button>
+            <br></br>
+            <div class="form-group">
+            <input type="hidden" name="precoCompra" value="{{$precoCompra}}">
+                <label class="control-label" for="tipo_pagamento">Tipo de Pagamento Preferido</label>
+                <select name="tipoPagamento" id="tipo_pagamento">
+                    <option value="mbway" selected>MBWAY</option> <!-- mudar estas liambas dos values e no nif, fica $client->.. -->
+                    <option value="paypal">PAYPAL</option>
+                    <option value="visa">VISA</option>
+                </select>
+            </div>
+        </form>
+</div>
+@endif
 
- 
 @endsection
