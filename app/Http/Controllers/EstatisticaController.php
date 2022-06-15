@@ -23,30 +23,48 @@ class EstatisticaController extends Controller
 
         //filmes
 
-        $filmeMenosVisto = DB::select("SELECT filme_id
-        FROM sessoes
-        GROUP BY filme_id
-        HAVING COUNT(*) =(SELECT min(count) 
+        $filmesMenosVistos = DB::select("SELECT sessoes.filme_id
+        FROM bilhetes
+        JOIN sessoes ON sessoes.id = bilhetes.sessao_id
+        JOIN filmes ON sessoes.filme_id = filmes.id
+        GROUP BY sessoes.filme_id
+        HAVING COUNT(*)=(
+        SELECT min(count)
         FROM
-        (SELECT filme_id, count(*) AS count
-        FROM sessoes
-        GROUP BY filme_id) AS filme_sessoes)");
+        (SELECT count(*) as count, sessoes.filme_id
+        FROM `bilhetes`
+        JOIN sessoes ON sessoes.id = bilhetes.sessao_id
+        GROUP BY sessoes.filme_id) AS count_bilhetes_filme)");
 
-        $filmeMaisVisto = DB::select("SELECT filme_id
-        FROM sessoes
-        GROUP BY filme_id
-        HAVING COUNT(*) =(SELECT max(count) 
+        $filmesMaisVistos = DB::select("SELECT sessoes.filme_id
+        FROM bilhetes
+        JOIN sessoes ON sessoes.id = bilhetes.sessao_id
+        JOIN filmes ON sessoes.filme_id = filmes.id
+        GROUP BY sessoes.filme_id
+        HAVING COUNT(*)=(
+        SELECT MAX(count)
         FROM
-        (SELECT filme_id, count(*) AS count
-        FROM sessoes
-        GROUP BY filme_id) AS filme_sessoes)");
+        (SELECT count(*) as count, sessoes.filme_id
+        FROM `bilhetes`
+        JOIN sessoes ON sessoes.id = bilhetes.sessao_id
+        GROUP BY sessoes.filme_id) AS count_bilhetes_filme)");
 
-        $idMenosVisto = $filmeMenosVisto[0]->filme_id;
-        $idMaisVisto = $filmeMaisVisto[0]->filme_id;
-        //dd($filmeMaisVisto[0]->filme_id, $filmeMenosVisto[0]);
+        $idsMenosVistos = array();
 
-        $filmes = Filme::orWhere('id', '=', $idMenosVisto)
-            ->orWhere('id', '=', $idMaisVisto)->get();
+        foreach ($filmesMenosVistos as $filme) {
+            array_push($idsMenosVistos, $filme->filme_id);
+        }
+
+        $idsMaisVistos = array();
+
+        foreach ($filmesMaisVistos as $filme) {
+            array_push($idsMaisVistos, $filme->filme_id);
+        }
+
+        //dd($idsMaisVistos, $idsMenosVistos);
+
+        $filmes = Filme::orWhereIn('id', $idsMenosVistos)
+            ->orWhereIn('id', $idsMaisVistos)->get();
 
         //generos
         $data = DB::table('filmes')
@@ -69,8 +87,8 @@ class EstatisticaController extends Controller
             ->withMaximo($maximo)
             ->withMedia($media)
             ->withFilmes($filmes)
-            ->withIdMenosVisto($idMenosVisto)
-            ->withIdMaisVisto($idMaisVisto)
+            ->withIdsMenosVistos($idsMenosVistos)
+            ->withIdsMaisVistos($idsMaisVistos)
             ->with('genero', json_encode($array));;
     }
 }

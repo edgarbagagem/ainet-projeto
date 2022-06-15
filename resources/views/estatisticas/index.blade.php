@@ -51,10 +51,10 @@
          asset('img/default_img.png') }}" alt="Cartaz do filme">
             @endif
             <div class="card-body">
-                @if($filme->id == $idMaisVisto)
+                @if(in_array($filme->id,$idsMaisVistos))
                 <p class="card-text" style="color: green">Filme Mais Visto</p>
                 @endif
-                @if($filme->id == $idMenosVisto)
+                @if(in_array($filme->id,$idsMenosVistos))
                 <p class="card-text" style="color: red">Filme Menos Visto</p>
                 @endif
                 <h5 class="carad-title">{{$filme->titulo}}</h5>
