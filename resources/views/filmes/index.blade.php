@@ -1,8 +1,8 @@
 @extends('layout')
 
-@section('title')
-<h2>Filmes</h2>
-@endsection
+@section('title', 'Filmes')
+
+
 
 @section('content')
 
@@ -47,7 +47,7 @@
                 @endif
                 <div class="card-body">
 
-                    <h5 class="carad-title">{{$filme->titulo}}</h5>
+                    <h5 class="card-title">{{$filme->titulo}}</h5>
                     <p class="card-text">{{$filme->sumario}}</p>
                 </div>
 

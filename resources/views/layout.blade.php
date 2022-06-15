@@ -75,7 +75,7 @@
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
-            
+
             @endif
             @endif
 
@@ -154,6 +154,22 @@
                 <a class="nav-link" href="{{route('config.index')}}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Administração de Negócio</span>
+                </a>
+            </li>
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Divider -->
+            <hr class="sidebar-divider d-none d-md-block">
+            @endif
+            @endif
+
+            <!-- NAV ITEM -->
+            @if(Auth()->check())
+            @if(Auth()->user()->tipo == 'A' )
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('estatisticas.index')}}">
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Estatísticas</span>
                 </a>
             </li>
             <!-- Divider -->
