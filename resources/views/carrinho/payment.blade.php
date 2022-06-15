@@ -1,10 +1,10 @@
 @extends('layout')
 @section('title','Pagamento' )
 @section('content')
-
+@foreach ($carrinho as $row)
 <form method="POST" action="{{route('carrinho.store')}}" class="form-group">
     @csrf
-
+<input class="form-control" type="hidden" name="precoFinal" value="{{$precoFinal}}"></input>
 @if(strcmp($tipoPagamento, "mbway") == 0)
 <div>
         <label for="inputPagamento"><b>Pagamento Feito Com MBWAY</label>
@@ -40,5 +40,5 @@
         <button type="submit" class="btn btn-primary" name="ok">Finalizar Compra</button>
     </div>
 </form>
-
+@endforeach
 @endsection

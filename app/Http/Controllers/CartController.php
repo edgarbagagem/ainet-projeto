@@ -21,8 +21,8 @@ class CartController extends Controller
     public function index(Request $request)
     {
         $configuracao = DB::table('configuracao')->first();
-
-    
+        $carrinho = $request->session()->get('carrinho', []);
+        
         return view('carrinho.index')
             ->withConfiguracao($configuracao)
             ->with('pageTitle', 'Carrinho de compras')
@@ -123,163 +123,183 @@ class CartController extends Controller
 
     public function preparePayment(Request $request)
     {
+        $precoFinal = $request['precoFinal'];
+        
         $configuracao = DB::table('configuracao')->first();
                 
         $tipoPagamento = $request['tipoPagamento'];
+        
  
-        return view('carrinho.payment')->withTipoPagamento($tipoPagamento)->withConfiguracao($configuracao);
+        return view('carrinho.payment')->withTipoPagamento($tipoPagamento)->withConfiguracao($configuracao)->withPrecoFinal($precoFinal)->with('carrinho', session('carrinho') ?? []);;
     }
 
     public function store(Request $request){
+        $precoFinal = $request['precoFinal'];
         $configuracao = DB::table('configuracao')->first();
         $user = \Auth::user();
         $user_name = User::where('id', '=', $user->id)->first();
-       /* $cliente = Cliente::query();
-        $cliente = $cliente->select('id as id', 'nif as nif')->where('id', '=', $user->id)->first();*/
+
         $cliente = Cliente::where('id', '=', $user->id)->first();
         $mytime = Carbon\Carbon::now();
         $format1 = 'Y-m-d';
         $data = Carbon\Carbon::parse($mytime)->format($format1);
         $carrinho = $request->session()->get('carrinho', []);
+        $sessoes = $request->session()->get('carrinho', ['id']);
          if($request['mbway'] != null){
             $mbwayNumero = $request['mbway'];
             if(Payment::payWithMBway($mbwayNumero)){
-                //falta preco_total_sem_iva e com iva porque n tenho a quantidade ainda, e recibo_pdf_url
+                
                 $recibo = new Recibo;
                 $recibo->cliente_id = $cliente->id;
                 $recibo->data = $data;
-               // $recibo->preco_total_sem_iva = $configuracao->preco_bilhete_sem_iva * ($carrinho->qtd);
+
+                $recibo->preco_total_sem_iva = $precoFinal - ($precoFinal * ($configuracao->percentagem_iva / 100));
+                $recibo->preco_total_sem_iva = number_format($recibo->preco_total_sem_iva, 2,'.',' ');
+                
+                $recibo->preco_total_com_iva = $precoFinal;
+
                 $recibo->iva = $configuracao->percentagem_iva;
-               // $recibo->preco_total_com_iva = ($recibo->preco_total_sem_iva + ($recibo->preco_total_sem_iva * $recibo->iva))*$carrinho->qtd;
-               //dd($recibo->preco_total_com_iva);
+                $recibo->iva = number_format($recibo->iva, 2,'.',' ');
+              
                 if($cliente->nif != null){
                     $recibo->nif = $cliente->nif;
                 }else{
                     $recibo->nif = null;
                 }
+
                 $recibo->nome_cliente = $user_name->name;
                 $recibo->tipo_pagamento = "MBWAY";
                 $recibo->ref_pagamento = $request['mbway'];
-                $recibo->preco_total_sem_iva = 8.85;
-                $recibo->preco_total_com_iva = 8.85*(8.85*0.13);
                 $recibo_id = Recibo::query();
                 $recibo_id = $recibo_id->select('id as id')->orderBy('id','DESC')->first();
-                dd($recibo_id);
+                
                 $recibo->save();
 
-                
-                //falta sessao_id e lugar_id
-                $bilhete = new Bilhete;
-                $bilhete->recibo_id = $recibo_id;
-                $bilhete->cliente_id = $cliente->id;
-                $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
-                
-                $bilhete->estado = "não usado";
-                //-> BILHETE
-                //id
-                //recibo_id
-                //cliente_id
-                //sessao_id !!
-                //lugar_id !!
-                //preco_sem_iva 
-                //estado
-                $bilhete->save();
+                foreach($carrinho as $sessao){
+                    $bilhete = new Bilhete;
+                    
+                    //bilhete->recibo_id ta a ficar com -1 do que era supost por causa  $recibo_id->select('id as id')->orderBy('id','DESC')->first();
+                    $bilhete->cliente_id = $cliente->id;
+                    $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
+                    $bilhete->estado = "não usado";
+                    $bilhete->sessao_id = $sessao['id'];
+                    $bilhete->lugar_id = 18;
+                    
+                  // $bilhete->recibo_id = $id_ultimo_recibo;
+                    $ultimo_recibo = Recibo::query();
+                    $ultimo_recibo = $ultimo_recibo->orderBy('id','DESC')->value('id');
+                    $bilhete->recibo_id = $ultimo_recibo;
+                   // dd($bilhete);
+
+                    $bilhete->save();
+                }
+
                 
                 return $this->destroy($request);
 
             }else{
-                dd('Insucesso');
+                
+               /* return redirect()->route('carrinho.index')
+                ->with('alert-msg', "Pagamento não autorizado!")
+                ->with('alert-type', 'danger');*/
             }
         }
 
         if($request['paypal'] != null){
             $paypalMail = $request['paypal'];
-            if(Payment::payWithPayPal($paypalMail)){
-                dd('Sucesso');
+            if(Payment::payWithPaypal($paypalMail)){
+                
                 $recibo = new Recibo;
                 $recibo->cliente_id = $cliente->id;
                 $recibo->data = $data;
-               // $recibo->preco_total_sem_iva = $configuracao->preco_bilhete_sem_iva * ($carrinho->qtd);
+
+                $recibo->preco_total_sem_iva = $precoFinal - ($precoFinal * ($configuracao->percentagem_iva / 100));
+                $recibo->preco_total_sem_iva = number_format($recibo->preco_total_sem_iva, 2,'.',' ');
+                
+                $recibo->preco_total_com_iva = $precoFinal;
+
                 $recibo->iva = $configuracao->percentagem_iva;
-               // $recibo->preco_total_com_iva = ($recibo->preco_total_sem_iva + ($recibo->preco_total_sem_iva * $recibo->iva))*$carrinho->qtd;
-               //dd($recibo->preco_total_com_iva);
+                $recibo->iva = number_format($recibo->iva, 2,'.',' ');
+              
                 if($cliente->nif != null){
                     $recibo->nif = $cliente->nif;
                 }else{
                     $recibo->nif = null;
                 }
-                $recibo->nome_cliente = $cliente->nome;
-                $recibo->tipo_pagamento = "paypal";
+
+                $recibo->nome_cliente = $user_name->name;
+                $recibo->tipo_pagamento = "PAYPAL";
                 $recibo->ref_pagamento = $request['paypal'];
+                $recibo_id = Recibo::query();
+                $recibo_id = $recibo_id->select('id as id')->orderBy('id','DESC')->first();
+ 
                 $recibo->save();
 
+                
                 $bilhete = new Bilhete;
                 $bilhete->recibo_id = $recibo_id;
                 $bilhete->cliente_id = $cliente->id;
                 $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
-                
                 $bilhete->estado = "não usado";
+              
                 $bilhete->save();
-
+                
+                return $this->destroy($request);
 
             }else{
-                dd('Insucesso');
+               /* return redirect()->route('carrinho.index')
+                ->with('alert-msg', "Pagamento não autorizado!")
+                ->with('alert-type', 'danger');*/
             }
         }
 
         if(($request['visa_digitos'] && $request['visa_cvc']) != null){
-            $visa_digitos = $request['visa_digitos'];
-            $visa_cvc = $request['visa_cvc'];
-            if(Payment::payWithVisa($visa_digitos, $visa_cvc)){
-                dd('Sucesso');
+            $visaDigitos = $request['visa_digitos'];
+            if(Payment::payWithVisa($visaDigitos)){
+                
                 $recibo = new Recibo;
                 $recibo->cliente_id = $cliente->id;
                 $recibo->data = $data;
-               // $recibo->preco_total_sem_iva = $configuracao->preco_bilhete_sem_iva * ($carrinho->qtd);
+
+                $recibo->preco_total_sem_iva = $precoFinal - ($precoFinal * ($configuracao->percentagem_iva / 100));
+                $recibo->preco_total_sem_iva = number_format($recibo->preco_total_sem_iva, 2,'.',' ');
+                
+                $recibo->preco_total_com_iva = $precoFinal;
+
                 $recibo->iva = $configuracao->percentagem_iva;
-               // $recibo->preco_total_com_iva = ($recibo->preco_total_sem_iva + ($recibo->preco_total_sem_iva * $recibo->iva))*$carrinho->qtd;
-               //dd($recibo->preco_total_com_iva);
+                $recibo->iva = number_format($recibo->iva, 2,'.',' ');
+              
                 if($cliente->nif != null){
                     $recibo->nif = $cliente->nif;
                 }else{
-                    $recibo->if = null;
+                    $recibo->nif = null;
                 }
-                $recibo->nome_cliente = $cliente->nome;
-                $recibo->tipo_pagamento = "visa";
+
+                $recibo->nome_cliente = $user_name->name;
+                $recibo->tipo_pagamento = "VISA";
                 $recibo->ref_pagamento = $request['visa_digitos'];
-                //-> RECIBO
-                //id 
-                //id do cliente
-                //data deste momento
-                //preco_total_sem_iva !!
-                //iva
-                //preco_total_com_iva  !!
-                //nif (opcional)
-                //nome_cliente
-                //tipo_pagamento
-                //ref_pagamento (email/numero de tele/visa numero) -> depende do tipo de pagamento
-                //recibo_pdf_url  !!
+                $recibo_id = Recibo::query();
+                $recibo_id = $recibo_id->select('id as id')->orderBy('id','DESC')->first();
+                
+ 
                 $recibo->save();
 
+                
                 $bilhete = new Bilhete;
                 $bilhete->recibo_id = $recibo_id;
                 $bilhete->cliente_id = $cliente->id;
                 $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
-                
                 $bilhete->estado = "não usado";
-                //-> BILHETE
-                //id
-                //recibo_id
-                //cliente_id
-                //sessao_id !!
-                //lugar_id !!
-                //preco_sem_iva 
-                //estado
+               
                 $bilhete->save();
-
+                
+                return $this->destroy($request);
 
             }else{
-                dd('Insucesso');
+                //return $this->index($request)->with('alert-msg', 'Pagamento Inválido!')->with('alert-type', 'danger');
+               /* return redirect()->route('carrinho.index')
+                ->with('alert-msg', "Pagamento não autorizado!")
+                ->with('alert-type', 'danger');*/
             }
             
         }
