@@ -4,7 +4,7 @@
 
 <form method="POST" action="{{route('carrinho.store')}}" class="form-group">
     @csrf
-
+<input class="form-control" type="hidden" name="precoFinal" value="{{$precoFinal}}"></input>
 @if(strcmp($tipoPagamento, "mbway") == 0)
 <div>
         <label for="inputPagamento"><b>Pagamento Feito Com MBWAY</label>

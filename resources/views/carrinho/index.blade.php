@@ -2,12 +2,8 @@
 @section('title','Carrinho de Compras' )
 @section('content')
 
-<!-- <div class="row mb-3">
-    @can('create', App\Models\sessao::class)
-    <a href="{{route('admin.sessoes.create')}}" class="btn btn-success" role="button" aria-pressed="true">Novo sessao</a>
-    @endcan
-</div> -->
-<?php $precoCompra = 0; ?>
+<?php $precoCompra = 0;
+$precoFinal=0; ?>
 <div>
     <p>
     <form action="{{ route('carrinho.destroy') }}" method="POST">
@@ -69,7 +65,9 @@
                 $iva = $configuracao->percentagem_iva / 100;
                 $precoCadaBilhete = $configuracao->preco_bilhete_sem_iva + ($configuracao->preco_bilhete_sem_iva * $iva);
                 if ($row['qtd'] != 0) {
-                    $precoCompra += $precoCadaBilhete * $row['qtd'];
+                    
+                    $precoFinal += $precoCadaBilhete * $row['qtd'];
+                    $precoCompra = $precoCadaBilhete * $row['qtd'];
                 }
                 if ($row['qtd'] == 0) {
                     $precoCompra = 0;
@@ -86,7 +84,7 @@
 </table>
 <hr>
 <br></br>
-@if (Auth::check())
+@if(Auth()->user()->tipo == 'C' )
 @if($carrinho != [])
 <div>
     <p></p>
@@ -95,7 +93,8 @@
         <button type="submit" class="btn btn-dark" name="confirm">Confirmar Carrinho</button>
         <br></br>
         <div class="form-group">
-            <input type="text" name="precoCompra" value="{{$precoCompra}}">
+            <input type="text" name="precoFinal" value="{{number_format($precoFinal, 2,'.',' ')}}"> <b>€</input>
+            <br></br>
             <label class="control-label" for="tipo_pagamento">Tipo de Pagamento Preferido</label>
             <select name="tipoPagamento" id="tipo_pagamento">
                 <option value="mbway" selected>MBWAY</option> <!-- mudar estas liambas dos values e no nif, fica $client->.. -->
