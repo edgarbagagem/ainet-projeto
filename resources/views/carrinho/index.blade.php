@@ -2,11 +2,6 @@
 @section('title','Carrinho de Compras' )
 @section('content')
 
-<!-- <div class="row mb-3">
-    @can('create', App\Models\sessao::class)
-    <a href="{{route('admin.sessoes.create')}}" class="btn btn-success" role="button" aria-pressed="true">Novo sessao</a>
-    @endcan
-</div> -->
 <?php $precoCompra = 0;
 $precoFinal=0; ?>
 <div>
@@ -89,7 +84,7 @@ $precoFinal=0; ?>
 </table>
 <hr>
 <br></br>
-@if (Auth::check())
+@if(Auth()->user()->tipo == 'C' )
 @if($carrinho != [])
 <div>
     <p></p>

@@ -138,19 +138,23 @@ class CartController extends Controller
         $configuracao = DB::table('configuracao')->first();
         $user = \Auth::user();
         $user_name = User::where('id', '=', $user->id)->first();
-
-        $cliente = Cliente::where('id', '=', $user->id)->first();
+        
+        $cliente = Cliente::where('id', '=', $user_name->id)->first();
+        
         $mytime = Carbon\Carbon::now();
         $format1 = 'Y-m-d';
         $data = Carbon\Carbon::parse($mytime)->format($format1);
         $carrinho = $request->session()->get('carrinho', []);
         $sessoes = $request->session()->get('carrinho', ['id']);
+
          if($request['mbway'] != null){
             $mbwayNumero = $request['mbway'];
             if(Payment::payWithMBway($mbwayNumero)){
                 
                 $recibo = new Recibo;
+                
                 $recibo->cliente_id = $cliente->id;
+          
                 $recibo->data = $data;
 
                 $recibo->preco_total_sem_iva = $precoFinal - ($precoFinal * ($configuracao->percentagem_iva / 100));
@@ -170,38 +174,41 @@ class CartController extends Controller
                 $recibo->nome_cliente = $user_name->name;
                 $recibo->tipo_pagamento = "MBWAY";
                 $recibo->ref_pagamento = $request['mbway'];
-                $recibo_id = Recibo::query();
-                $recibo_id = $recibo_id->select('id as id')->orderBy('id','DESC')->first();
                 
+               
                 $recibo->save();
 
+                $recibo_id = Recibo::query();
+                $recibo_id = $recibo_id->orderBy('id','DESC')->value('id');
+                
                 foreach($carrinho as $sessao){
+                    $numero_bilhetes = $sessao['qtd'];
+                    for($i=0;$i<$numero_bilhetes;$i++){
                     $bilhete = new Bilhete;
                     
-                    //bilhete->recibo_id ta a ficar com -1 do que era supost por causa  $recibo_id->select('id as id')->orderBy('id','DESC')->first();
+                    
                     $bilhete->cliente_id = $cliente->id;
                     $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
                     $bilhete->estado = "não usado";
                     $bilhete->sessao_id = $sessao['id'];
-                    $bilhete->lugar_id = 18;
+                    $bilhete->lugar_id = 18; //lugar
                     
-                  // $bilhete->recibo_id = $id_ultimo_recibo;
-                    $ultimo_recibo = Recibo::query();
-                    $ultimo_recibo = $ultimo_recibo->orderBy('id','DESC')->value('id');
-                    $bilhete->recibo_id = $ultimo_recibo;
-                   // dd($bilhete);
+                   
+                    $bilhete->recibo_id = $recibo_id;
 
                     $bilhete->save();
+                    }
                 }
 
                 
-                return $this->destroy($request);
+                 $this->destroy($request);
+                 return redirect()->route('carrinho.index')->with('alert-msg', 'Pagamento bem sucedido')->with('alert-type', 'success');
 
             }else{
                 
-               /* return redirect()->route('carrinho.index')
+                return redirect()->route('carrinho.index')
                 ->with('alert-msg', "Pagamento não autorizado!")
-                ->with('alert-type', 'danger');*/
+                ->with('alert-type', 'danger');
             }
         }
 
@@ -210,7 +217,9 @@ class CartController extends Controller
             if(Payment::payWithPaypal($paypalMail)){
                 
                 $recibo = new Recibo;
+                
                 $recibo->cliente_id = $cliente->id;
+          
                 $recibo->data = $data;
 
                 $recibo->preco_total_sem_iva = $precoFinal - ($precoFinal * ($configuracao->percentagem_iva / 100));
@@ -230,26 +239,42 @@ class CartController extends Controller
                 $recibo->nome_cliente = $user_name->name;
                 $recibo->tipo_pagamento = "PAYPAL";
                 $recibo->ref_pagamento = $request['paypal'];
-                $recibo_id = Recibo::query();
-                $recibo_id = $recibo_id->select('id as id')->orderBy('id','DESC')->first();
- 
+                
+               
                 $recibo->save();
 
+                $recibo_id = Recibo::query();
+                $recibo_id = $recibo_id->orderBy('id','DESC')->value('id');
                 
-                $bilhete = new Bilhete;
-                $bilhete->recibo_id = $recibo_id;
-                $bilhete->cliente_id = $cliente->id;
-                $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
-                $bilhete->estado = "não usado";
-              
-                $bilhete->save();
+                foreach($carrinho as $sessao){
+                    $numero_bilhetes = $sessao['qtd'];
+                    for($i=0;$i<$numero_bilhetes;$i++){
+                    $bilhete = new Bilhete;
+                    
+                    
+                    $bilhete->cliente_id = $cliente->id;
+                    $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
+                    $bilhete->estado = "não usado";
+                    $bilhete->sessao_id = $sessao['id'];
+                    $bilhete->lugar_id = 18;
+                    
+                   
+                    $bilhete->recibo_id = $recibo_id;
+
+                    //dd($bilhete);
+
+                    $bilhete->save();
+                    }
+                }
+
                 
-                return $this->destroy($request);
+                 $this->destroy($request);
+                 return redirect()->route('carrinho.index')->with('alert-msg', 'Pagamento bem sucedido')->with('alert-type', 'success');
 
             }else{
-               /* return redirect()->route('carrinho.index')
+                return redirect()->route('carrinho.index')
                 ->with('alert-msg', "Pagamento não autorizado!")
-                ->with('alert-type', 'danger');*/
+                ->with('alert-type', 'danger');
             }
         }
 
@@ -258,7 +283,9 @@ class CartController extends Controller
             if(Payment::payWithVisa($visaDigitos)){
                 
                 $recibo = new Recibo;
+                
                 $recibo->cliente_id = $cliente->id;
+          
                 $recibo->data = $data;
 
                 $recibo->preco_total_sem_iva = $precoFinal - ($precoFinal * ($configuracao->percentagem_iva / 100));
@@ -278,28 +305,43 @@ class CartController extends Controller
                 $recibo->nome_cliente = $user_name->name;
                 $recibo->tipo_pagamento = "VISA";
                 $recibo->ref_pagamento = $request['visa_digitos'];
-                $recibo_id = Recibo::query();
-                $recibo_id = $recibo_id->select('id as id')->orderBy('id','DESC')->first();
                 
- 
+               
                 $recibo->save();
 
+                $recibo_id = Recibo::query();
+                $recibo_id = $recibo_id->orderBy('id','DESC')->value('id');
                 
-                $bilhete = new Bilhete;
-                $bilhete->recibo_id = $recibo_id;
-                $bilhete->cliente_id = $cliente->id;
-                $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
-                $bilhete->estado = "não usado";
-               
-                $bilhete->save();
+                foreach($carrinho as $sessao){
+                    $numero_bilhetes = $sessao['qtd'];
+                    for($i=0;$i<$numero_bilhetes;$i++){
+                    $bilhete = new Bilhete;
+                    
+                    
+                    $bilhete->cliente_id = $cliente->id;
+                    $bilhete->preco_sem_iva = $configuracao->preco_bilhete_sem_iva;
+                    $bilhete->estado = "não usado";
+                    $bilhete->sessao_id = $sessao['id'];
+                    $bilhete->lugar_id = 18;
+                    
+                   
+                    $bilhete->recibo_id = $recibo_id;
+
+                    //dd($bilhete);
+
+                    $bilhete->save();
+                    }
+                }
+
                 
-                return $this->destroy($request);
+                 $this->destroy($request);
+                 return redirect()->route('carrinho.index')->with('alert-msg', 'Pagamento bem sucedido')->with('alert-type', 'success');
 
             }else{
-                //return $this->index($request)->with('alert-msg', 'Pagamento Inválido!')->with('alert-type', 'danger');
-               /* return redirect()->route('carrinho.index')
+                
+                return redirect()->route('carrinho.index')
                 ->with('alert-msg', "Pagamento não autorizado!")
-                ->with('alert-type', 'danger');*/
+                ->with('alert-type', 'danger');
             }
             
         }
