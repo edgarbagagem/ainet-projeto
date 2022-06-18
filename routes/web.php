@@ -125,3 +125,9 @@ Route::put('/controloSessao/bilhetes/{sessao}', [UserController::class, 'validat
 
 //Estatísticas
 Route::get('/estatisticas', [EstatisticaController::class, 'index'])->name('estatisticas.index');
+
+
+//historico
+Route::get('/recibos/{user}', [ClienteController::class, 'cliente_recibos'])->name('cliente.recibos');
+Route::get('recibos/{user}/{recibo}', [ClienteController::class, 'cliente_recibo'])->name('cliente.recibo');
+Route::get('recibos/pdf/{user}/{recibo}', [ClienteController::class, 'cliente_recibo_pdf'])->name('cliente.recibo.pdf');

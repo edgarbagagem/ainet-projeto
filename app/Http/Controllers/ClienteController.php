@@ -5,6 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\User;
+use App\Models\Recibo;
+use App\Models\Bilhete;
+use App\Models\Filme;
+use App\Models\Sala;
+use App\Models\Sessao;
+use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClienteController extends Controller
 {
@@ -76,5 +83,56 @@ class ClienteController extends Controller
                 ->with('alert-msg', 'Não foi possível bloquear/desbloquear o Cliente "' . $cliente->id  . '". Erro: ' . $th->errorInfo[2])
                 ->with('alert-type', 'danger');
         }
+    }
+
+    public function cliente_recibos(User $user)
+    {
+
+        $recibos = Recibo::where('cliente_id', '=', $user->id)->paginate(10);
+
+        return view('cliente.recibos')->withRecibos($recibos);
+    }
+
+    public function cliente_recibo(User $user, Recibo $recibo)
+    {
+        $bilhetes = Bilhete::where('recibo_id', '=', $recibo->id)->get();
+        foreach ($bilhetes as $bilhete) {
+            $sessao = Sessao::find($bilhete->sessao_id);
+            $filme = Filme::find($sessao->filme_id);
+            $sala = Sala::find($sessao->sala_id);
+            $lugar = DB::table('lugares')->where('id', '=', $bilhete->lugar_id)->first();
+            $bilhete->filme = $filme->titulo;
+            $bilhete->sala = $sala->nome;
+            $bilhete->data = $sessao->data;
+            $bilhete->horario = $sessao->horario_inicio;
+            $bilhete->lugar = $lugar->fila . $lugar->posicao;
+        }
+
+        return view('cliente.recibo')->withRecibo($recibo)->withBilhetes($bilhetes);
+    }
+
+    public function cliente_recibo_pdf(User $user, Recibo $recibo)
+    {
+        $bilhetes = Bilhete::where('recibo_id', '=', $recibo->id)->get();
+        foreach ($bilhetes as $bilhete) {
+            $sessao = Sessao::find($bilhete->sessao_id);
+            $filme = Filme::find($sessao->filme_id);
+            $sala = Sala::find($sessao->sala_id);
+            $lugar = DB::table('lugares')->where('id', '=', $bilhete->lugar_id)->first();
+            $bilhete->filme = $filme->titulo;
+            $bilhete->sala = $sala->nome;
+            $bilhete->data = $sessao->data;
+            $bilhete->horario = $sessao->horario_inicio;
+            $bilhete->lugar = $lugar->fila . $lugar->posicao;
+        }
+
+        $data = array('recibo', 'bilhetes');
+
+        $data['recibo'] = $recibo;
+        $data['bilhetes'] = $bilhetes;
+
+        $pdf = PDF::loadView('cliente.recibo', $data);
+
+        return $pdf->download('recibo' . $recibo->id . '.pdf');
     }
 }

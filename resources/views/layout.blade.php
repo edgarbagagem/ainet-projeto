@@ -217,6 +217,10 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Perfil
                                 </a>
+                                <a class="dropdown-item" href="{{ route('cliente.recibos', ['user' => Auth()->user()])}}">
+                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Recibos
+                                </a>
                                 @endif
                                 @if(Auth()->user()->tipo == 'A' )
                                 <a class="dropdown-item" href="{{ route('users.admin.consultar', ['user' => Auth()->user()])}}">

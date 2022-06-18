@@ -87,7 +87,7 @@
         <div class="card">
             <div class="card-header">Percentagens dos diferentes géneros de filmes</div>
             <div class="card-body">
-                <div class="card-img-top" id="pie_chart"></div>
+                <div id="pie_chart" style></div>
             </div>
         </div>
     </div>
