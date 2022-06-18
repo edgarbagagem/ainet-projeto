@@ -93,7 +93,9 @@ $precoFinal=0; ?>
         <button type="submit" class="btn btn-dark" name="confirm">Confirmar Carrinho</button>
         <br></br>
         <div class="form-group">
-            <input type="text" name="precoFinal" value="{{number_format($precoFinal, 2,'.',' ')}}"> <b>€</input>
+        
+        <input type="hidden" name="precoFinal" value="{{number_format($precoFinal, 2,'.',' ')}}"></input>
+            <input type="text" name="precoFinalMostrar" value="{{number_format($precoFinal, 2,'.',' ')}}" disabled> <b>€</input>
             <br></br>
             <label class="control-label" for="tipo_pagamento">Tipo de Pagamento Preferido</label>
             <select name="tipoPagamento" id="tipo_pagamento">

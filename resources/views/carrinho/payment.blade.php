@@ -38,7 +38,34 @@
 @endif
 <div class="form-group text-right">
         <button type="submit" class="btn btn-primary" name="ok">Finalizar Compra</button>
-    </div>
+</div>
+
+<label for="Escolha de Lugares"><b>Escolha de Lugares</b></label>
+@foreach($filas as $fila)
+   <p>{{$fila->fila}}</p>
+@endforeach
+@foreach ($carrinho as $row)
+<?php
+$bilhetesPorSessao = $row['qtd'];
+for($i=0; $i<$bilhetesPorSessao;$i++){
+   $j = $i+1;
+
+    echo '<p>Lugares para Sessão: '.$row['id'].'<br>Sala: '.$row['sala'].'<br>Lugar: '.$j.'</p>';
+    echo '<div class="row">';
+    echo '<div class ="col">';
+    echo '<input class="form-control" type="text" style="width:20%" placeholder="Fila" name=lugar/'.$row['id'].'/'.$j.' required /><br>';
+    echo '</div>';
+    echo '<div class = "col">';
+    echo '<input class="form-control" type="number" style="width:20%; margin-left:5px;" placeholder="Lugar" name=lugar/'.$row['id'].'/'.$j.'required /><br>';
+    echo '</div>';
+    echo '</div>';
+}
+echo '<hr></hr>';
+echo '<hr></hr>';
+
+?>
+@endforeach
+
 </form>
 
 @endsection

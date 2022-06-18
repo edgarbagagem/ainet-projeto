@@ -15,11 +15,17 @@ class EstatisticaController extends Controller
     public function index()
     {
         //bilhetes
-        $minimo = Bilhete::groupBy('preco_sem_iva')->min('preco_sem_iva');
-        $maximo = Bilhete::groupBy('preco_sem_iva')->max('preco_sem_iva');
-        $media = Bilhete::groupBy('preco_sem_iva')->avg('preco_sem_iva');
+        
+        //$minimo = Bilhete::groupBy('preco_sem_iva')->min('preco_sem_iva');
+       
+        //$maximo = Bilhete::groupBy('preco_sem_iva')->max('preco_sem_iva');
+        $minimo = Bilhete::min('preco_sem_iva');
+        $maximo = Bilhete::max('preco_sem_iva');
 
-        $media = number_format($media, 2, '.', ' ');
+
+        $media = Bilhete::avg('preco_sem_iva');
+
+        $mediaFinal = number_format($media, 2, '.', ' ');
 
         //filmes
 
@@ -85,7 +91,7 @@ class EstatisticaController extends Controller
 
         return view('estatisticas.index')->withMinimo($minimo)
             ->withMaximo($maximo)
-            ->withMedia($media)
+            ->withMedia($mediaFinal)
             ->withFilmes($filmes)
             ->withIdsMenosVistos($idsMenosVistos)
             ->withIdsMaisVistos($idsMaisVistos)

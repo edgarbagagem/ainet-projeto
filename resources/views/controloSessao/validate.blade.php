@@ -38,6 +38,12 @@
     </div>
 </div>
 </form>
+
+@if(isset($bilhete->id))
+
+<p>BILLHETEEEEE</p>
+@endif
+
 <br></br>
 <br></br>
 <br></br>

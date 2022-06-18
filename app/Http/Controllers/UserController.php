@@ -319,16 +319,21 @@ class UserController extends Controller
         return view('controloSessao.index')->withSessoes($sessoes)->withFilmes($filmes)->withSelectedFilme($filme);//   ->withSalaFilme($salasFilme)->withSala($sala);
     }
 
-    public function controlledSession($id){
-
+    public function controlledSession($id, $bilhete_id = null, $cliente_id = null){
+        
         $sessoes = Sessao::query();
         $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
         ->join('filmes', 'filmes.id', '=', 'sessoes.filme_id')
         ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
         ->where('sessoes.id', '=', $id)->first();
-
-
-        return view('controloSessao.validate')->withSessao($sessoes);
+      
+        if(!empty($bilhete) && !empty($cliente)){
+            dd($bilhete, $cliente);
+            return view('controloSessao.validate')->withSessao($sessoes)->withBilhete($bilhete)->withCliente($cliente);
+        } else{
+            return view('controloSessao.validate')->withSessao($sessoes);
+           
+        }
 
     }
 
@@ -357,11 +362,12 @@ class UserController extends Controller
 
         if (strcmp($bilhete->estado, $str) == 0) {
             $bilhete->estado = "usado";
+            $cliente = User::where('id', '=', $bilhete->cliente_id)->first();
             $bilhete->save();
 
-            return redirect()->route('controloSessao.sessao', ['id' => $sessao->id])
-                ->with('alert-msg', 'Bilhete "' . $id . '" foi validado com sucesso!')
-                ->with('alert-type', 'success');
+            return redirect()->route('controloSessao.sessao', ['id' => $sessao->id], ['bilhete_id' => $bilhete->id], ['cliente_id' => $cliente->id])
+            ->with('alert-msg', 'Bilhete "' . $id . '" foi validado com sucesso!')
+            ->with('alert-type', 'success');
         }else{
             return redirect()->route('controloSessao.sessao', ['id' => $sessao->id])
             ->with('alert-msg', 'Bilhete "' . $id . '" já foi usado!')
