@@ -110,6 +110,7 @@ Route::delete('/config/sessao/{sessao}', [ConfigurationController::class, 'delet
     ->middleware('can:delete, App\Models\Sessao');
 //carrinho
 Route::get('carrinho', [CartController::class, 'index'])->name('carrinho.index');
+Route::post('carrinho/sessao/{sessao}/lugar', [CartController::class, 'escolher_lugar'])->name('carrinho.escolher_lugar');
 Route::post('carrinho/sessao/{sessao}', [CartController::class, 'store_bilhete'])->name('carrinho.store_bilhete');
 Route::delete('carrinho', [CartController::class, 'destroy'])->name('carrinho.destroy');
 Route::post('carrinho/payment', [CartController::class, 'preparePayment'])->name('carrinho.preparePayment');
@@ -132,3 +133,7 @@ Route::get('/estatisticas', [EstatisticaController::class, 'index'])->name('esta
 Route::get('/recibos/{user}', [ClienteController::class, 'cliente_recibos'])->name('cliente.recibos');
 Route::get('recibos/{user}/{recibo}', [ClienteController::class, 'cliente_recibo'])->name('cliente.recibo');
 Route::get('recibos/pdf/{user}/{recibo}', [ClienteController::class, 'cliente_recibo_pdf'])->name('cliente.recibo.pdf');
+Route::get('bilhetes/{user}', [ClienteController::class, 'cliente_bilhetes'])->name('cliente.bilhetes');
+Route::get('bilhetes/{user}/{bilhete}', [ClienteController::class, 'cliente_bilhete'])->name('cliente.bilhete');
+Route::get('bilhetes/pdf/{user}/{bilhete}', [ClienteController::class, 'cliente_bilhete_pdf'])->name('cliente.bilhete.pdf');
+Route::get('recibos/{user}/{recibo}/bilhetes', [ClienteController::class, 'cliente_recibo_bilhetes'])->name('cliente.recibo.bilhetes');
