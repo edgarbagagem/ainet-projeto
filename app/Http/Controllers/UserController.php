@@ -319,7 +319,7 @@ class UserController extends Controller
         return view('controloSessao.index')->withSessoes($sessoes)->withFilmes($filmes)->withSelectedFilme($filme);//   ->withSalaFilme($salasFilme)->withSala($sala);
     }
 
-    public function controlledSession($id, $bilhete_id = null, $cliente_id = null){
+    public function controlledSession($id){
         
         $sessoes = Sessao::query();
         $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
@@ -327,13 +327,10 @@ class UserController extends Controller
         ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
         ->where('sessoes.id', '=', $id)->first();
       
-        if(!empty($bilhete) && !empty($cliente)){
-            dd($bilhete, $cliente);
-            return view('controloSessao.validate')->withSessao($sessoes)->withBilhete($bilhete)->withCliente($cliente);
-        } else{
-            return view('controloSessao.validate')->withSessao($sessoes);
+
+        return view('controloSessao.validate')->withSessao($sessoes);
            
-        }
+
 
     }
 
@@ -364,8 +361,8 @@ class UserController extends Controller
             $bilhete->estado = "usado";
             $cliente = User::where('id', '=', $bilhete->cliente_id)->first();
             $bilhete->save();
-
-            return redirect()->route('controloSessao.sessao', ['id' => $sessao->id], ['bilhete_id' => $bilhete->id], ['cliente_id' => $cliente->id])
+            
+            return redirect()->route('controloSessao.show', ['id' => $sessao->id, 'bilhete_id' => $bilhete->id, 'cliente_id' => $cliente->id])
             ->with('alert-msg', 'Bilhete "' . $id . '" foi validado com sucesso!')
             ->with('alert-type', 'success');
         }else{
@@ -378,9 +375,24 @@ class UserController extends Controller
 
 }
 
-public function showTicket(Bilhete $bilhete){
+public function showTicket($id, $bilhete_id, $cliente_id){
+        
+    $sessoes = Sessao::query();
+    $sessoes = $sessoes->select('sessoes.id AS id', 'filmes.titulo AS titulo', 'sessoes.data', 'sessoes.horario_inicio', 'salas.nome AS sala', 'salas.id AS sala_id')
+    ->join('filmes', 'filmes.id', '=', 'sessoes.filme_id')
+    ->join('salas', 'salas.id', '=', 'sessoes.sala_id')
+    ->where('sessoes.id', '=', $id)->first();
+    $bilhete = Bilhete::query();
+    $bilhete = $bilhete->select('id', 'recibo_id', 'cliente_id', 'sessao_id', 'lugar_id', 'preco_sem_iva')
+    ->where('id', '=', $bilhete_id)->first();
 
-    return view('controloSessao.validate')->withBilhete($bilhete);
+    $cliente = User::query();
+    $cliente = $cliente->select('name')->first();
+
+    return view('controloSessao.show')->withSessao($sessoes)->withBilhete($bilhete)->withCliente($cliente);
+       
+
+
 }
 
 

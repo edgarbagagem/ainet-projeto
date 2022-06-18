@@ -38,8 +38,38 @@
     </div>
 </div>
 </form>
+<br></br>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome do Cliente</th>
+            <th>Foto do Cliente</th>
+            <th>ID Bilhete</th>
+            <th>ID Recibo</th>
+            <th>ID Cliente</th>
+            <th>ID Sessão</th>
+            <th>Lugar do Bilhete</th>
+            <th>Preço do Bilhete</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+        <tr> 
+            <td>{{$cliente->name}}</td>
+            <td>
+                <img src="{{$cliente->foto_url ? asset('storage/fotos/' . $cliente->foto_url) : asset('img/default_img.png') }}" alt="Foto do Cliente" class="img-profile rounded-circle" style="width:40px;height:40px">
+            </td>
+            <td>{{$bilhete->id}}</td>
+            <td>{{$bilhete->recibo_id}}</td>
+            <td>{{$bilhete->cliente_id}}</td>
+            <td>{{$bilhete->sessao_id}}</td>
+            <td>{{$bilhete->lugar_id}}</td>
+            <td>{{$bilhete->preco_sem_iva}}€</td>
+</tr>
 
-
+        
+    </tbody>
+</table>
 
 <br></br>
 <br></br>
