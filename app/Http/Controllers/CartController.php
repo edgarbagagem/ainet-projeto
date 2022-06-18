@@ -128,9 +128,20 @@ class CartController extends Controller
         $configuracao = DB::table('configuracao')->first();
                 
         $tipoPagamento = $request['tipoPagamento'];
-        
- 
-        return view('carrinho.payment')->withTipoPagamento($tipoPagamento)->withConfiguracao($configuracao)->withPrecoFinal($precoFinal)->with('carrinho', session('carrinho') ?? []);;
+
+        $carrinho = $request->session()->get('carrinho', []);
+         $sessoes = $request->session()->get('carrinho', ['id']);
+        foreach($sessoes as $sessao){
+            $sala_id = Sala::query();
+            $sala_id = $sala_id->select('id as id')->where('nome','=', $sessao['sala'])->value('id');
+            
+            $filas = DB::table('lugares')->select('fila as fila')->where('sala_id', '=', $sala_id)->groupBy('fila')->get();
+            
+            //ir buscra todos os lugares
+            //ir buscar os lugares ocupados
+            //1º MINUS 2º
+        }
+        return view('carrinho.payment')->withTipoPagamento($tipoPagamento)->withConfiguracao($configuracao)->withPrecoFinal($precoFinal)->with('carrinho', session('carrinho') ?? [])->with($sessoes)->withFilas($filas);
     }
 
     public function store(Request $request){
