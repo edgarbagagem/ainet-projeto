@@ -12,6 +12,7 @@
             <th>Total Com Iva</th>
             <th></th>
             <th></th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +30,10 @@
             <td>
                 <a href="{{route('cliente.recibo.pdf', ['user' => Auth()->user(), 'recibo' => $recibo])}}" target="_blank" class="btn btn-success btn-sm">
                     Descarregar PDF </a>
+            </td>
+            <td>
+                <a href="{{route('cliente.recibo.bilhetes', ['user' => Auth()->user(), 'recibo' => $recibo])}}" target="_blank" class="btn btn-primary btn-sm">
+                    Bilhetes </a>
             </td>
         </tr>
         </form>
