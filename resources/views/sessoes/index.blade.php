@@ -23,7 +23,7 @@
                     <th>Hora</th>
                     <th>Sala</th>
                     <th>Lugares Disponíveis</th>
-                    <th>Bilhetes</th>
+                    <th></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -41,21 +41,24 @@
                     <td>{{$sessao->sala}}</td>
                     <td>{{$lugaresDisponiveis}}</td>
                     <td>
-                    <form action="{{route('carrinho.store_bilhete', $sessao)}}" method="POST">
-                @csrf
-                
-                <button type="submit" class="btn btn-primary" name="ok">Adicionar Bilhete ao Carrinho</button>
-            </form>
-            </td>
+                        <form action="{{route('carrinho.escolher_lugar', $sessao)}}" method="POST">
+                            @csrf
+
+                            <button type="submit" class="btn btn-primary" name="ok">Adicionar Bilhete ao Carrinho</button>
+                        </form>
+                    </td>
                     <td>
+                        @if(isset($id))
                         @if($sessao->lugaresOcupados == 0)
                         <form action="{{route('config.edit.sessao', ['id' => $id, 'sessao' => $sessao])}}">
                             @csrf
                             <input type="submit" class="btn btn-info btn-sm" value="Alterar">
                         </form>
                         @endif
+                        @endif
                     </td>
                     <td>
+                        @if(isset($id))
                         @if($sessao->lugaresOcupados == 0)
                         <form action="{{route('config.delete.sessao', ['sessao' => $sessao])}}" method="POST">
                             @csrf
@@ -63,21 +66,6 @@
                             <input type="submit" class="btn btn-danger btn-sm" value="Apagar">
                         </form>
                         @endif
-                    </td>
-                    @if($sessao->lugaresOcupados == 0)
-                        <form action="{{route('config.edit.sessao', ['id' => $id, 'sessao' => $sessao])}}">
-                            @csrf
-                            <input type="submit" class="btn btn-info btn-sm" value="Alterar">
-                        </form>
-                        @endif
-                    </td>
-                    <td>
-                        @if($sessao->lugaresOcupados == 0)
-                        <form action="{{route('config.delete.sessao', ['sessao' => $sessao])}}" method="POST">
-                            @csrf
-                            @method('delete')
-                            <input type="submit" class="btn btn-danger btn-sm" value="Apagar">
-                        </form>
                         @endif
                     </td>
                 </tr>

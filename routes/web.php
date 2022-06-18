@@ -110,6 +110,7 @@ Route::delete('/config/sessao/{sessao}', [ConfigurationController::class, 'delet
     ->middleware('can:delete, App\Models\Sessao');
 //carrinho
 Route::get('carrinho', [CartController::class, 'index'])->name('carrinho.index');
+Route::post('carrinho/sessao/{sessao}/lugar', [CartController::class, 'escolher_lugar'])->name('carrinho.escolher_lugar');
 Route::post('carrinho/sessao/{sessao}', [CartController::class, 'store_bilhete'])->name('carrinho.store_bilhete');
 Route::delete('carrinho', [CartController::class, 'destroy'])->name('carrinho.destroy');
 Route::post('carrinho/payment', [CartController::class, 'preparePayment'])->name('carrinho.preparePayment');
@@ -118,7 +119,7 @@ Route::put('carrinho/sessao/{sessao}', [CartController::class, 'update_sessao'])
 Route::post('carrinho', [CartController::class, 'store'])->name('carrinho.store');
 
 //Controlo de Sessão
-Route::get('/controloSessao', [UserController::class, 'sessionControl'])->name('controloSessao.index'); //ver se é preciso middleware c eddy
+Route::get('/controloSessao', [UserController::class, 'sessionControl'])->name('controloSessao.index');
 Route::get('/controloSessao/bilhetes/{id}/{bilhete_id?}/{cliente_id?}', [UserController::class, 'controlledSession'])->name('controloSessao.sessao');
 Route::put('/controloSessao/bilhetes/{sessao}', [UserController::class, 'validateTickets'])->name('controloSessao.validate');
 
