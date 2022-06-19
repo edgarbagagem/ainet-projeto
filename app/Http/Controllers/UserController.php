@@ -387,7 +387,7 @@ public function showTicket($id, $bilhete_id, $cliente_id){
     ->where('id', '=', $bilhete_id)->first();
 
     $cliente = User::query();
-    $cliente = $cliente->select('name')->first();
+    $cliente = $cliente->select('name', 'foto_url')->where('id', '=', $bilhete->cliente_id)->first();
 
     return view('controloSessao.show')->withSessao($sessoes)->withBilhete($bilhete)->withCliente($cliente);
        
