@@ -84,6 +84,7 @@ $precoFinal=0; ?>
 </table>
 <hr>
 <br></br>
+@if(Auth()->check())
 @if(Auth()->user()->tipo == 'C' )
 @if($carrinho != [])
 <div>
@@ -106,6 +107,7 @@ $precoFinal=0; ?>
         </div>
     </form>
 </div>
+@endif
 @endif
 @endif
 

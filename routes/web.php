@@ -29,7 +29,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::post('/password/reset', [UserController::class, 'validatePasswordRequest'])->name('password.validateRequest');
 
-Route::put('/password/reset', [UserController::class, 'resetPassword'])->name('password.Reset');
+Route::put('/password/reset', [UserController::class, 'resetPassword'])->name('password.reset');
 
 //Route::post('/password/reset', [UserController::class, 'send_email_with_notification'])->name('email.send_with_notification');
 
@@ -119,8 +119,9 @@ Route::put('carrinho/sessao/{sessao}', [CartController::class, 'update_sessao'])
 Route::post('carrinho', [CartController::class, 'store'])->name('carrinho.store');
 
 //Controlo de Sessão
-Route::get('/controloSessao', [UserController::class, 'sessionControl'])->name('controloSessao.index');
-Route::get('/controloSessao/bilhetes/{id}/{bilhete_id?}/{cliente_id?}', [UserController::class, 'controlledSession'])->name('controloSessao.sessao');
+Route::get('/controloSessao', [UserController::class, 'sessionControl'])->name('controloSessao.index'); //ver se é preciso middleware c eddy
+Route::get('/controloSessao/bilhetes/{id}', [UserController::class, 'controlledSession'])->name('controloSessao.sessao');
+Route::get('/controloSessao/bilhetes/{id}/{bilhete_id}/{cliente_id}', [UserController::class, 'showTicket'])->name('controloSessao.show');
 Route::put('/controloSessao/bilhetes/{sessao}', [UserController::class, 'validateTickets'])->name('controloSessao.validate');
 
 

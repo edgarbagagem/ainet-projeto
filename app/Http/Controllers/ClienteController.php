@@ -208,6 +208,7 @@ class ClienteController extends Controller
         $bilhete->cliente = $cliente->name;
         $bilhete->foto_url = $cliente->foto_url;
         $bilhete->pdf = false;
+        $bilhete->cliente_id = $cliente->id;
 
         return view('cliente.bilhete')->withBilhete($bilhete);
     }

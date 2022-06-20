@@ -238,8 +238,8 @@ class CartController extends Controller
                         $bilhete->save();
                     }
                 }
-
-
+                
+                
                 $this->destroy($request);
                 return redirect()->route('carrinho.index')->with('alert-msg', 'Pagamento bem sucedido')->with('alert-type', 'success');
             } else {
