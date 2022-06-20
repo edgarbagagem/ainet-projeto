@@ -8,9 +8,11 @@ use App\Models\Sala;
 use App\Models\Filme;
 use App\Models\Sessao;
 use App\Models\Genero;
+use App\Models\Bilhete;
 use Carbon;
 use App\Http\Requests\FilmePost;
 use App\Http\Requests\SessaoPost;
+use PhpParser\Node\Stmt\TryCatch;
 
 class ConfigurationController extends Controller
 {
@@ -100,19 +102,24 @@ class ConfigurationController extends Controller
 
     public function update_sala(Request $request, Sala $sala)
     {
-        DB::table('lugares')->where('sala_id', '=', $sala->id)->delete();
+        try {
+            DB::table('lugares')->where('sala_id', '=', $sala->id)->delete();
 
-        $sala->nome = $request->nome;
-        $sala->save();
+            $sala->nome = $request->nome;
+            $sala->save();
 
-        for ($i = 0; $i < $request->filas; $i++) {
-            for ($j = 0; $j < $request->colunas; $j++) {
-                DB::table('lugares')->insert(['sala_id' => $sala->id, 'fila' => $this->alphabet[$i], 'posicao' => $j + 1]);
+            for ($i = 0; $i < $request->filas; $i++) {
+                for ($j = 0; $j < $request->colunas; $j++) {
+                    DB::table('lugares')->insert(['sala_id' => $sala->id, 'fila' => $this->alphabet[$i], 'posicao' => $j + 1]);
+                }
             }
-        }
 
-        return redirect()->route('config.index')->with('alert-msg', 'Sala atualizada com sucesso')
-            ->with('alert-type', 'success');
+            return redirect()->route('config.index')->with('alert-msg', 'Sala atualizada com sucesso')
+                ->with('alert-type', 'success');
+        } catch (\Throwable $th) {
+            return redirect()->route('config.index')->with('alert-msg', 'Não foi possível alterar a sala"' . $sala->id  . '". Erro: ' . $th->errorInfo[2])
+                ->with('alert-type', 'danger');
+        }
     }
 
     public function delete_sala(Sala $sala)
@@ -129,13 +136,13 @@ class ConfigurationController extends Controller
             'colunas' => $colunas,
         );
         $custom = json_encode($arr_tojson);
-
-        $sala->custom = $custom;
-        $sala->save();
-
-        DB::table('lugares')->where('sala_id', '=', $sala->id)->delete();
-
         try {
+            $sala->custom = $custom;
+            $sala->save();
+
+            DB::table('lugares')->where('sala_id', '=', $sala->id)->delete();
+
+
             $sala->delete();
 
             return redirect()->route('config.index')
