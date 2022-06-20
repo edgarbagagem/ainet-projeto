@@ -13,6 +13,7 @@ use App\Models\Sessao;
 use Illuminate\Support\Facades\DB;
 use PDF;
 use Carbon;
+use QrCode;
 
 class ClienteController extends Controller
 {
@@ -230,7 +231,9 @@ class ClienteController extends Controller
         $bilhete->cliente = $cliente->name;
         $bilhete->foto_url = $cliente->foto_url;
         $bilhete->pdf = true;
+        $bilhete->cliente_id = $cliente->id;
 
+        $bilhete->qrcode = base64_encode(QrCode::size(100)->generate('http://ainet-projeto.test/bilhetes/{{$bilhete->cliente_id}}/{{$bilhete->id}}'));
 
         $data = array('bilhete');
 

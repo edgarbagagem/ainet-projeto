@@ -25,14 +25,7 @@
                             <li class="text-black mt-1">Hora: <span class="text-muted mt-1">{{$bilhete->horario}}</span></li>
                             <li class="text-black mt-1">Lugar: <span class="text-muted mt-1">{{$bilhete->lugar}}</span></li>
                             <li class="text-black mt-1">Cliente: <span class="text-muted mt-1">{{$bilhete->cliente}}</span></li>
-                            <li class="text-black mt-1">Estado: <span class="text-muted mt-1">{{$bilhete->estado}}</span></li>
-                            <br></br>
-                            <li class="text-black mt-1">Apresentar QR Code á entrada do filme</li>
-                            <div class="card-body">
-
-                            {!! QrCode::size(150)->generate('http://ainet-projeto.test/bilhetes/{{$bilhete->cliente_id}}/{{$bilhete->id}}') !!}
-                            </div>
-</li>
+                            <li class="text-black mt-1">Estado: <span class="text-muted mt-1">{{$bilhete->estado}}</span></li>                      
                         </ul>
                     </div>
 
@@ -42,10 +35,10 @@
                     </div>
                     @endif
 
-
                     @if($bilhete->pdf == true)
-                    {!!QrCode::size(100)->generate('http://projeto.test/bilhetes/Auth()->user()->id/$bilhete->id');!!}
+                    <img src="data:image/png;base64, {!! $bilhete->qrcode !!}">
                     @endif
+
                 </div>
             </div>
         </div>
