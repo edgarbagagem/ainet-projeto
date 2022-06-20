@@ -29,7 +29,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::post('/password/reset', [UserController::class, 'validatePasswordRequest'])->name('password.validateRequest');
 
-Route::put('/password/reset', [UserController::class, 'resetPassword'])->name('password.Reset');
+Route::put('/password/reset', [UserController::class, 'resetPassword'])->name('password.reset');
 
 //Route::post('/password/reset', [UserController::class, 'send_email_with_notification'])->name('email.send_with_notification');
 

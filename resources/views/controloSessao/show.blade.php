@@ -39,6 +39,7 @@
 </div>
 </form>
 <br></br>
+<h2>Bilhete</h2><br>
 <table class="table">
     <thead>
         <tr>

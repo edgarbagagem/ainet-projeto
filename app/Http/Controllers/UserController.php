@@ -16,6 +16,8 @@ use App\Models\Sessao;
 use App\Models\Bilhete;
 use App\Models\Filme;
 use App\Models\Sala;
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class UserController extends Controller
 {
@@ -76,19 +78,19 @@ class UserController extends Controller
 
     public function validatePasswordRequest(Request $request)
     {
-
-        $user = DB::table('users')->where('email', '=', $request->email)
+         $user = DB::table('users')->where('email', '=', $request->email)
             ->first();
+
         //Check if the user exists
-        if (count($user) < 1) {
+        if (is_null($user)) {
             return redirect()->back()->withErrors(['email' => trans('User does not exist')]);
         }
 
         //Create Password Reset Token
         DB::table('password_resets')->insert([
             'email' => $request->email,
-            'token' => str_random(60),
-            'created_at' => Carbon::now()
+            'token' => Str::random(60),
+            'created_at' => Carbon\Carbon::now()
         ]);
         //Get the token just created above
         $tokenData = DB::table('password_resets')
@@ -113,7 +115,7 @@ class UserController extends Controller
             ->with('alert-type', 'success')
             ->with('alert-msg', 'E-Mail sent with success (using Notifications)');`
             */
-        $user = DB::table('users')->where('email', $email)->select('firstname', 'email')->first();
+        $user = DB::table('users')->where('email', $email)->select('name', 'email')->first();
 
         $link = config('base_url') . '/password/reset' . $token . '?email=' . urlencode($user->email);
     }
@@ -396,52 +398,35 @@ public function showTicket($id, $bilhete_id, $cliente_id){
 }
 
 
-}
 
-    /*
+
+    
 public function resetPassword(Request $request)
 {
-    //Validate input
-    $validator = Validator::make($request->all(), [
-        'email' => 'required|email|exists:users,email',
-        'password' => 'required|confirmed',
-        'token' => 'required' ]);
+    $request->validate([
+        'email' => 'required|email|exists:users',
+        'password' => 'required|string|min:6|confirmed',
+        'password_confirmation' => 'required'
+    ]);
 
-    //check if payload is valid before moving on
-    if ($validator->fails()) {
-        return redirect()->back()->withErrors(['email' => 'Please complete the form']);
+    $updatePassword = DB::table('password_resets')
+                        ->where([
+                          'email' => $request->email, 
+                          'token' => $request->token
+                        ])
+                        ->first();
+
+    if(!$updatePassword){
+        return back()->withInput()->with('error', 'Invalid token!');
     }
 
-    $password = $request->password;
-// Validate the token
-    $tokenData = DB::table('password_resets')
-    ->where('token', $request->token)->first();
-// Redirect the user back to the password reset request form if the token is invalid
-    if (!$tokenData) return view('auth.passwords.email');
+    $user = User::where('email', $request->email)
+                ->update(['password' => Hash::make($request->password)]);
 
-    $user = User::where('email', $tokenData->email)->first();
-// Redirect the user back if the email is invalid
-    if (!$user) return redirect()->back()->withErrors(['email' => 'Email not found']);
-//Hash and update the new password
-    $user->password = \Hash::make($password);
-    $user->update(); //or $user->save();
+    DB::table('password_resets')->where(['email'=> $request->email])->delete();
 
-    //login the user immediately they change password successfully
-    Auth::login($user);
-
-    //Delete the token
-    DB::table('password_resets')->where('email', $user->email)
-    ->delete();
-
-    //Send Email Reset Success Email
-    if ($this->sendSuccessEmail($tokenData->email)) {
-        return view('index');
-    } else {
-        return redirect()->back()->withErrors(['email' => trans('A Network Error occurred. Please try again.')]);
-    }
-
-
+    return redirect('/home')->with('message', 'Your password has been changed!');
+}    
 }
-}
-*/
+
 
